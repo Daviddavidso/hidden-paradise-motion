@@ -1,0 +1,965 @@
+/*
+Theme Name: The Hidden Paradise Ubud
+Theme URI: https://www.thehiddenparadiseubud.com
+Author: Dmytro Malkin
+Description: Custom theme for The Hidden Paradise Ubud. Direction: Nihi x Keemala, structure Bawah. Dev v0.1.
+Version: 0.13.0
+Requires PHP: 7.4
+Text Domain: thp
+*/
+
+
+/* Шрифты со своего сервера — не Google Fonts (правило проекта).
+   Instrument Serif — предложенный заголовочный, ждёт утверждения; замена = один блок. */
+@font-face{font-family:"Instrument Serif";font-style:normal;font-weight:400;font-display:swap;
+  src:url('assets/fonts/instrument-serif-regular.woff2') format('woff2')}
+@font-face{font-family:"Instrument Serif";font-style:italic;font-weight:400;font-display:swap;
+  src:url('assets/fonts/instrument-serif-italic.woff2') format('woff2')}
+
+:root{
+  --ink:#191807;
+  --forest:#23220F;
+  --forest-2:#2F2D15;
+  --patina:#6E6825;
+  --patina-lt:#A8A23C;
+  --bronze:#B4924F;
+  --accent:var(--patina);
+  --cream:#F4EEDA;
+  --paper:#FBF9F1;
+  --stone:#83805F;
+  --hair:rgba(110,104,37,.26);
+  --hair-dark:rgba(244,238,218,.16);
+
+  --serif:"Instrument Serif","Hoefler Text","Iowan Old Style",Baskerville,"Palatino Linotype",Palatino,"Times New Roman",serif;
+  --sans:"Helvetica Neue",Helvetica,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+
+  --gutter:clamp(1.25rem,5.5vw,6.5rem);
+  --band:clamp(4.5rem,10vw,9rem);
+}
+
+/* Единый визуальный мир: тема не переключается — как на настоящем сайте отеля */
+:root[data-theme="dark"],:root[data-theme="light"]{color-scheme:light}
+/* Патина слишком тёмная для тёмных секций — там работает её осветлённый вариант */
+.topbar,.nav-overlay,.hero,.page-hero,.specs,.section.on-dark,.section.deep,.band,.guests,.book,
+.panel,.offer,.footer,.dock,.mockup-note{--accent:var(--patina-lt)}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+
+/* ── типографика ───────────────────────────── */
+.eyebrow{
+  font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;
+  font-weight:400;line-height:1.6;color:var(--accent);
+}
+.display{
+  font-family:var(--serif);font-weight:400;letter-spacing:.005em;
+  text-wrap:balance;margin:0;
+}
+h1.display{font-size:clamp(3rem,8.6vw,8rem);line-height:.96}
+h2.display{font-size:clamp(2.1rem,4.4vw,3.9rem);line-height:1.06}
+h3.display{font-size:clamp(1.35rem,2vw,1.75rem);line-height:1.2}
+.lede{font-size:clamp(1rem,1.15vw,1.09rem);line-height:1.85;max-width:60ch}
+.muted{color:var(--stone)}
+.on-dark .muted{color:rgba(244,238,218,.68)}
+
+/* ── ссылки-стрелки ─────────────────────────── */
+.arrow-link{
+  display:inline-flex;align-items:center;gap:1rem;
+  font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;
+}
+.arrow-link .circle{
+  width:46px;height:46px;border:1px solid currentColor;border-radius:50%;
+  display:grid;place-items:center;opacity:.55;
+  transition:opacity .45s ease,transform .45s ease,background-color .45s ease;
+}
+.arrow-link:hover .circle{opacity:1;transform:translate(4px,-4px);background:rgba(110,104,37,.30)}
+.arrow-link .circle svg{width:14px;height:14px}
+
+.text-link{
+  display:inline-block;font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;
+  padding-bottom:.4rem;border-bottom:1px solid var(--hair);transition:border-color .4s ease;
+}
+.text-link:hover{border-color:var(--accent)}
+
+/* ── шапка ──────────────────────────────────── */
+.topbar{
+  position:fixed;inset:0 0 auto;z-index:60;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  padding:1.4rem var(--gutter);color:var(--cream);text-shadow:0 1px 18px rgba(25,24,7,.6);
+  transition:background-color .5s ease,padding .5s ease,box-shadow .5s ease;
+}
+.topbar.solid{background:rgba(25,24,7,.94);padding-top:.85rem;padding-bottom:.85rem;box-shadow:0 1px 0 var(--hair-dark);text-shadow:none}
+.menu-btn{display:flex;align-items:center;gap:.85rem;font-size:.66rem;letter-spacing:.28em;text-transform:uppercase}
+/* зона нажатия 44x44 без сдвига вёрстки: сама кнопка мелкая (32x13 на мобильном), растим только область попадания псевдоэлементом */
+.menu-btn,.nav-close{position:relative}
+.menu-btn::after,.nav-close::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:44px;min-height:44px}
+.menu-btn .bars{display:grid;gap:4px;width:20px}
+.menu-btn .bars i{height:1px;background:currentColor;display:block;transition:transform .4s ease}
+.menu-btn:hover .bars i:first-child{transform:translateX(3px)}
+.wordmark{text-align:center;line-height:1}
+.wordmark .name{font-family:var(--serif);font-size:clamp(.95rem,1.5vw,1.2rem);letter-spacing:.24em;text-transform:uppercase}
+.wordmark .sub{font-size:.55rem;letter-spacing:.42em;text-transform:uppercase;color:var(--accent);margin-top:.45rem}
+.reserve{
+  justify-self:end;border:1px solid rgba(244,238,218,.5);
+  padding:.85rem 1.7rem;font-size:.64rem;letter-spacing:.26em;text-transform:uppercase;
+  transition:background-color .4s ease,border-color .4s ease,color .4s ease;
+}
+.reserve:hover{background:var(--patina);border-color:var(--patina);color:var(--cream)}
+
+/* ── меню-оверлей (карта разделов) ──────────── */
+.nav-overlay{
+  position:fixed;inset:0;z-index:80;background:var(--ink);color:var(--cream);
+  padding:clamp(4.5rem,9vw,6rem) var(--gutter) 3rem;overflow-y:auto;
+  opacity:0;visibility:hidden;transition:opacity .5s ease,visibility .5s;
+}
+.nav-overlay.open{opacity:1;visibility:visible}
+.nav-close{position:absolute;top:1.6rem;right:var(--gutter);font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;display:flex;gap:.8rem;align-items:center}
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:clamp(1.8rem,3vw,2.6rem) clamp(1.4rem,2.4vw,2.4rem);max-width:1500px;margin:0 auto}
+/* шесть разделов в один ряд, пока хватает ширины: иначе панель становится выше экрана */
+@media (min-width:1180px){ .nav-grid{grid-template-columns:repeat(6,1fr)} }
+/* 20.09.2026: заголовки колонок меню были мелкой «технической» строкой; по замечанию владельца задачи
+   они стали крупными серифными, как названия разделов, а не как подпись над списком. */
+.nav-col h4{margin:0 0 1rem;font-family:var(--serif);font-size:clamp(1.35rem,1.65vw,1.8rem);line-height:1.15;letter-spacing:.01em;text-transform:none;color:var(--accent);font-weight:400}
+@media (max-width:720px){ .nav-col h4{font-size:1.45rem;margin-bottom:.9rem} }
+.nav-col ul{list-style:none;margin:0;padding:0;display:grid;gap:.75rem}
+.nav-col a{font-family:var(--serif);font-size:1.06rem;opacity:.82;transition:opacity .3s ease,padding-left .3s ease}
+.nav-col a:hover{opacity:1;padding-left:.35rem;color:var(--accent)}
+.nav-foot{max-width:1500px;margin:clamp(2.5rem,5vw,4rem) auto 0;padding-top:1.7rem;border-top:1px solid var(--hair-dark);display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-between;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,238,218,.6)}
+
+/* ── герой ──────────────────────────────────── */
+.hero{position:relative;height:100svh;min-height:600px;overflow:hidden;color:var(--cream)}
+.hero-media{position:absolute;inset:0}
+.hero-media img{width:100%;height:100%;object-fit:cover;animation:drift 34s ease-in-out infinite alternate}
+@keyframes drift{from{transform:scale(1.04) translate3d(0,0,0)}to{transform:scale(1.13) translate3d(-1.4%,-1.2%,0)}}
+.hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(25,24,7,.80) 0%,rgba(25,24,7,.34) 20%,rgba(25,24,7,.14) 42%,rgba(25,24,7,.55) 78%,rgba(25,24,7,.88) 100%),
+    radial-gradient(115% 75% at 50% 52%,rgba(25,24,7,0) 34%,rgba(25,24,7,.5) 100%);
+}
+.hero-inner{position:relative;z-index:2;height:100%;display:grid;align-content:center;justify-items:center;text-align:center;padding:0 var(--gutter);text-shadow:0 2px 26px rgba(25,24,7,.5)}
+.hero .eyebrow{color:rgba(244,238,218,.9)}
+.hero h1{margin:1.6rem 0 0}
+.hero h1 em{font-style:italic;color:var(--cream)}
+.hero .tagline{margin-top:2rem;font-size:.68rem;letter-spacing:.34em;text-transform:uppercase;color:rgba(244,238,218,.88)}
+.hero-foot{
+  position:absolute;z-index:3;left:var(--gutter);right:var(--gutter);bottom:5.2rem;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;color:var(--cream);
+  text-shadow:0 2px 20px rgba(25,24,7,.5);
+}
+.film{display:inline-flex;align-items:center;gap:1rem;font-size:.64rem;letter-spacing:.26em;text-transform:uppercase}
+.film .play{width:48px;height:48px;border:1px solid rgba(244,238,218,.55);border-radius:50%;display:grid;place-items:center;transition:background-color .4s ease,border-color .4s ease}
+.film:hover .play{background:var(--patina);border-color:var(--patina)}
+.film .play svg{width:11px;height:11px;margin-left:2px}
+.scroll-cue{display:grid;justify-items:center;gap:.9rem;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(244,238,218,.75)}
+.scroll-cue .stem{width:1px;height:44px;background:linear-gradient(rgba(244,238,218,.7),rgba(244,238,218,0));animation:cue 2.6s ease-in-out infinite}
+@keyframes cue{0%,100%{opacity:.3;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
+.hero-foot .spacer{width:120px}
+
+/* ── бар бронирования ───────────────────────── */
+.booking-wrap{position:relative;z-index:20;margin-top:-46px;padding:0 var(--gutter)}
+.booking{
+  max-width:1180px;margin:0 auto;background:var(--paper);
+  border:1px solid var(--hair);box-shadow:0 26px 60px -34px rgba(25,24,7,.55);
+  display:grid;grid-template-columns:repeat(3,1fr) auto;align-items:stretch;
+}
+.bk-field{padding:1.35rem 1.6rem;border-right:1px solid var(--hair);display:grid;gap:.5rem;align-content:center}
+.bk-field label{font-size:.6rem;letter-spacing:.26em;text-transform:uppercase;color:var(--stone)}
+.bk-field .val{font-family:var(--serif);font-size:1.12rem}
+.bk-btn{
+  background:var(--forest);color:var(--cream);padding:1.35rem 2.4rem;
+  font-size:.64rem;letter-spacing:.26em;text-transform:uppercase;
+  transition:background-color .4s ease;white-space:nowrap;
+}
+.bk-btn:hover{background:var(--patina);color:var(--cream)}
+.booking-note{max-width:1180px;margin:.9rem auto 0;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);text-align:right}
+
+/* ── секции ─────────────────────────────────── */
+/* 22.09.2026: было жёстко 88px, а шапка меряется в 91px, и любой якорь на сайте уезжал под неё на 3px.
+   Теперь по реальной высоте шапки плюс воздух; --topbar-h ставит скрипт при загрузке и при resize. */
+.section,.split,.duo,.band{scroll-margin-top:calc(var(--topbar-h,88px) + 20px)}
+.section{padding:var(--band) var(--gutter)}
+.section.on-dark{background:var(--forest);color:var(--cream)}
+.section.deep{background:var(--ink);color:var(--cream)}
+.wrap{max-width:1400px;margin:0 auto}
+.head{display:grid;gap:1.5rem;justify-items:center;text-align:center;max-width:820px;margin:0 auto}
+/* заголовки в центрованных блоках тянем на всю ширину: перенос задаёт <br>, не shrink-to-fit */
+.head>h2.display,.intro h2.display,.intro .lede,.intro .facts{justify-self:stretch;width:100%}
+.intro .lede{max-width:62ch;margin-inline:auto}
+
+/* интро с рисованной долиной */
+.intro{position:relative;overflow:hidden;text-align:center;padding-bottom:calc(var(--band) + 110px)}
+.valley{position:absolute;left:50%;bottom:-26px;transform:translateX(-50%);width:min(1600px,150%);opacity:.26;pointer-events:none}
+.intro .wrap{position:relative;z-index:2;display:grid;justify-items:center;gap:2rem}
+.monogram{width:54px;height:54px;color:var(--accent)}
+.facts{
+  margin-top:clamp(2.5rem,5vw,4rem);width:100%;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  border-top:1px solid var(--hair);
+}
+.fact{padding:1.9rem 1rem;border-right:1px solid var(--hair);display:grid;gap:.6rem;justify-items:center}
+.fact:last-child{border-right:0}
+.fact .n{font-family:var(--serif);font-size:clamp(1.6rem,2.4vw,2.15rem);line-height:1}
+.fact .l{font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--stone);text-align:center}
+
+/* сплит-экран */
+.split{display:grid;grid-template-columns:1fr 1fr}
+.panel{position:relative;min-height:min(88vh,820px);display:grid;align-items:end;color:var(--cream);overflow:hidden}
+.panel>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.2,.7,.3,1)}
+.panel:hover>img{transform:scale(1.05)}
+.panel::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(25,24,7,.18) 0%,rgba(25,24,7,.26) 32%,rgba(25,24,7,.74) 72%,rgba(25,24,7,.94) 100%)}
+.panel-body{position:relative;z-index:2;padding:clamp(2rem,4vw,3.6rem);display:grid;gap:1.3rem;max-width:560px}
+.panel-body p{margin:0;color:rgba(244,238,218,.82);font-size:.97rem;line-height:1.8}
+.panel-links{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,238,218,.72)}
+.panel-links span{opacity:.45}
+.panel-foot{display:flex;justify-content:space-between;align-items:center;gap:1.5rem;margin-top:.4rem}
+
+/* карточки номеров */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:clamp(1.5rem,2.6vw,2.6rem);margin-top:clamp(2.5rem,5vw,4rem)}
+.card{display:grid;gap:1.15rem;align-content:start}
+.card .shot{overflow:hidden;aspect-ratio:3/2}
+.card .shot img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.3,1)}
+.card:hover .shot img{transform:scale(1.055)}
+.card .meta{font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--stone)}
+.on-dark .card .meta,.deep .card .meta{color:rgba(244,238,218,.6)}
+.card p{margin:0;font-size:.95rem;line-height:1.75;color:var(--stone)}
+.on-dark .card p,.deep .card p{color:rgba(244,238,218,.72)}
+.rate{font-family:var(--serif);font-size:1.02rem;letter-spacing:.02em}
+.rate small{font-family:var(--sans);font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--stone);margin-right:.55rem}
+
+.section-foot{
+  margin-top:clamp(2.5rem,4.5vw,3.5rem);padding-top:1.8rem;border-top:1px solid var(--hair);
+  display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between;
+}
+.on-dark .section-foot,.deep .section-foot{border-top-color:var(--hair-dark)}
+.section-foot p{margin:0;max-width:52ch;font-size:.93rem;color:var(--stone)}
+.on-dark .section-foot p,.deep .section-foot p{color:rgba(244,238,218,.68)}
+
+/* полоса на всю ширину */
+.band{position:relative;min-height:min(78vh,700px);display:grid;place-items:center;text-align:center;color:var(--cream);overflow:hidden}
+.band>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.band::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(25,24,7,.55),rgba(25,24,7,.62))}
+.band .inner{position:relative;z-index:2;padding:var(--band) var(--gutter);max-width:900px;display:grid;gap:1.6rem;justify-items:center}
+.band blockquote{margin:0;font-family:var(--serif);font-style:italic;font-size:clamp(1.5rem,3vw,2.5rem);line-height:1.4}
+
+/* сплит текст + фото */
+.duo{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
+.duo .shot{position:relative;min-height:min(80vh,720px)}
+.duo .shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.duo .copy{padding:var(--band) var(--gutter);display:grid;align-content:center;gap:1.6rem}
+.duo .copy .list{display:grid;gap:.85rem;margin:.6rem 0 0;padding:0;list-style:none}
+.duo .copy .list li{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:baseline;font-size:.94rem;line-height:1.7}
+.duo .copy .list .k{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+
+/* офферы */
+.offers{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(1.5rem,2.6vw,2.6rem);margin-top:clamp(2.5rem,5vw,4rem)}
+.offer{position:relative;min-height:460px;display:grid;align-items:end;overflow:hidden;color:var(--cream)}
+.offer>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.3s cubic-bezier(.2,.7,.3,1)}
+.offer:hover>img{transform:scale(1.05)}
+.offer::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(25,24,7,.10) 0%,rgba(25,24,7,.30) 40%,rgba(25,24,7,.80) 72%,rgba(25,24,7,.95) 100%)}
+.offer .body{position:relative;z-index:2;padding:clamp(1.6rem,2.6vw,2.4rem);display:grid;gap:.9rem}
+.offer .body p{margin:0;font-size:.92rem;line-height:1.7;color:rgba(244,238,218,.8)}
+
+/* отзывы */
+.guests{position:relative;overflow:hidden;color:var(--cream);text-align:center}
+.guests>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.guests::after{content:"";position:absolute;inset:0;background:rgba(25,24,7,.86)}
+.guests .wrap{position:relative;z-index:2;display:grid;gap:2rem;justify-items:center}
+.quote{font-family:var(--serif);font-style:italic;font-size:clamp(1.35rem,2.5vw,2.05rem);line-height:1.5;max-width:24ch;margin:0}
+.quote-meta{display:grid;gap:.5rem;font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:rgba(244,238,218,.7)}
+.quote-meta .visit{color:var(--bronze)}
+.dots{display:flex;gap:0;margin-top:.4rem}
+.dots i{width:6px;height:6px;border-radius:50%;background:rgba(244,238,218,.3);display:block;transition:background-color .4s ease,transform .4s ease}
+.dots i.on,.dots .dot.on i{background:var(--accent);transform:scale(1.35)}
+/* 20.09.2026: the quotes rotate. All slides share one grid cell, so the block keeps the height of the longest one and nothing jumps. */
+.quotes{display:grid;justify-items:center;width:100%}
+.quote-item{grid-area:1/1;margin:0;display:grid;gap:2rem;justify-items:center;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity 1.3s ease,transform 1.3s ease,visibility 1.3s}
+.quote-item.on{opacity:1;visibility:visible;transform:none}
+/* tap zones must not overlap: with 44px zones on negative margins the next dot caught the click (20.09.2026) */
+.dots .dot{width:32px;height:44px;margin:0;display:grid;place-items:center;cursor:pointer}
+.dots .dot:hover i{background:rgba(244,238,218,.7)}
+.dots .dot:focus-visible{outline:1px solid var(--bronze);outline-offset:-10px;border-radius:50%}
+.quote-sample{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);background:var(--bronze);padding:.45rem .8rem}
+
+/* подвал */
+.aerial{height:min(52vh,460px);overflow:hidden}
+.aerial img{width:100%;height:100%;object-fit:cover}
+.footer{background:var(--ink);color:var(--cream);padding:var(--band) var(--gutter) 2.5rem}
+.foot-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:clamp(2rem,4vw,3.5rem);max-width:1400px;margin:0 auto}
+.foot-grid h4{margin:0 0 1.2rem;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:400}
+.foot-grid p,.foot-grid li{margin:0;font-size:.9rem;line-height:1.85;color:rgba(244,238,218,.76)}
+.foot-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
+.foot-grid a:hover{color:var(--accent)}
+.news{display:flex;border-bottom:1px solid var(--hair-dark);padding-bottom:.7rem;margin-top:1rem;gap:1rem}
+.news input{flex:1;background:none;border:0;color:var(--cream);font:inherit;font-size:.9rem;padding:0}
+.news input::placeholder{color:rgba(244,238,218,.4)}
+.news button{font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+.foot-bottom{
+  max-width:1400px;margin:clamp(2.5rem,5vw,4rem) auto 0;padding-top:1.6rem;border-top:1px solid var(--hair-dark);
+  display:flex;flex-wrap:wrap;gap:1.2rem;justify-content:space-between;
+  font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,238,218,.5);
+}
+
+/* липкая нижняя панель */
+.dock{
+  position:fixed;left:50%;transform:translateX(-50%) translateY(150%);bottom:1.4rem;z-index:55;
+  display:flex;gap:.3rem;background:rgba(25,24,7,.93);border:1px solid var(--hair-dark);
+  color:var(--cream);padding:.35rem;transition:transform .55s cubic-bezier(.3,.8,.3,1);
+}
+.dock.up{transform:translateX(-50%) translateY(0)}
+.dock a{display:flex;align-items:center;gap:.6rem;padding:.75rem 1.25rem;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;transition:background-color .35s ease}
+.dock a:hover{background:rgba(110,104,37,.34)}
+.dock svg{width:13px;height:13px;opacity:.7}
+
+/* пометка о макете */
+.mockup-note{
+  background:var(--forest-2);color:rgba(244,238,218,.72);
+  padding:1.6rem var(--gutter);font-size:.8rem;line-height:1.7;
+  border-top:1px solid var(--hair-dark);
+}
+.mockup-note b{color:var(--accent);font-weight:400;letter-spacing:.12em;text-transform:uppercase;font-size:.62rem}
+.mockup-note div{max-width:1400px;margin:0 auto;display:grid;gap:.55rem}
+
+/* появление при скролле */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 1s cubic-bezier(.2,.7,.3,1),transform 1s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:1000px){
+  .split,.duo,.foot-grid{grid-template-columns:1fr}
+  .duo .shot{min-height:56vh}
+  .panel{min-height:70vh}
+  .booking{grid-template-columns:1fr 1fr}
+  .bk-field:nth-child(2){border-right:0}
+  .bk-field:nth-child(3){border-right:0;border-top:1px solid var(--hair)}
+  .bk-btn{grid-column:1/-1}
+  .booking-note{text-align:center}
+}
+@media (max-width:720px){
+  .topbar{grid-template-columns:auto 1fr auto;padding-left:1.1rem;padding-right:1.1rem}
+  .menu-btn span{display:none}
+  .reserve{padding:.7rem 1.1rem;font-size:.58rem}
+  .hero-foot{flex-direction:column;align-items:flex-start;gap:1.4rem}
+  .hero-foot .spacer{display:none}
+  .scroll-cue{display:none}
+  .booking{grid-template-columns:1fr}
+  .bk-field{border-right:0;border-bottom:1px solid var(--hair)}
+  .fact{border-right:0;border-bottom:1px solid var(--hair)}
+  .dock a{padding:.7rem .85rem}
+  .dock span{display:none}
+  .dock svg{width:16px;height:16px}
+}
+/* ── 20.09.2026 — home rework ─────────────────────────────────────────── */
+/* Menu as a drop-down panel on desktop (opens on hover over MENU, or on click). Phones keep the full-screen overlay. */
+.nav-overlay.as-panel{inset:0 0 auto 0;z-index:55;max-height:min(88vh,780px);padding-top:calc(var(--topbar-h,84px) + 1.6rem);padding-bottom:1.6rem;transform:translateY(-16px);transition:opacity .35s ease,visibility .35s,transform .5s cubic-bezier(.2,.7,.3,1);box-shadow:0 30px 60px rgba(25,24,7,.35)}
+.nav-overlay.as-panel.open{transform:none}
+.nav-overlay.as-panel .nav-close{display:none}
+.topbar.menu-open{background:var(--ink);text-shadow:none;box-shadow:none}
+.thp-scrim{position:fixed;inset:0;z-index:54;background:rgba(25,24,7,.38);opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s}
+.thp-scrim.on{opacity:1;visibility:visible}
+/* the photo block now follows the booking bar directly */
+.booking-wrap + .split{margin-top:clamp(2.5rem,5vw,4.5rem)}
+/* Programs band: the way into the quiz */
+.band>picture{display:contents}
+.band>picture>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thp-pband{place-items:center start;text-align:left}
+.thp-pband::after{background:linear-gradient(90deg,rgba(25,24,7,.80) 0%,rgba(25,24,7,.64) 42%,rgba(25,24,7,.28) 100%)}
+.thp-pband .inner{max-width:640px;justify-items:start;margin-left:clamp(0rem,4vw,5rem)}
+.thp-pband h2.display{margin:0;font-size:clamp(2.2rem,4.6vw,4rem);line-height:1.05}
+.thp-pband p{margin:0;max-width:48ch;color:rgba(244,238,218,.95);font-size:1.05rem;line-height:1.8}
+.thp-pband-cta{display:flex;flex-wrap:wrap;gap:1rem 1.8rem;align-items:center;justify-content:flex-start;margin-top:.6rem}
+.thp-pband-cta .btn{padding:1.05rem 1.9rem}
+.thp-pband-all{display:inline-flex;align-items:center;min-height:44px;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;background:linear-gradient(currentColor,currentColor) 0 72%/100% 1px no-repeat;opacity:.85;transition:opacity .3s ease}
+.thp-pband-all:hover{opacity:1}
+@media (max-width:720px){.thp-pband{place-items:center;text-align:center}.thp-pband::after{background:linear-gradient(180deg,rgba(25,24,7,.62),rgba(25,24,7,.76))}.thp-pband .inner{justify-items:center;margin-left:0}.thp-pband-cta{justify-content:center}}
+.nav-overlay.as-panel .nav-foot{margin-top:2rem}
+/* The Hidden Circle (20.09.2026): a card that slides in from the corner, never a full-screen pop-up */
+.screen-reader-text{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.thp-hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
+.thp-circle{position:fixed;right:clamp(12px,2vw,28px);bottom:clamp(12px,2vw,28px);z-index:70;width:min(400px,calc(100vw - 24px));max-height:calc(100svh - 24px);overflow:auto;background:var(--ink);color:var(--cream);border:1px solid rgba(244,238,218,.22);box-shadow:0 30px 70px -20px rgba(0,0,0,.6);padding:1.9rem 1.8rem 1.7rem;display:grid;gap:.9rem;opacity:0;transform:translateY(24px);transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.3,1)}
+.thp-circle[hidden]{display:none}
+.thp-circle.in{opacity:1;transform:none}
+.thp-circle .eyebrow{color:var(--bronze)}
+.thp-circle h2.display{margin:0;font-size:1.9rem;line-height:1.1;outline:0}
+.thp-circle-lede{margin:0;font-size:.93rem;line-height:1.65;color:rgba(244,238,218,.82)}
+.thp-circle-x{position:absolute;top:0;right:0;width:44px;height:44px;font-size:1.5rem;line-height:1;color:rgba(244,238,218,.7);cursor:pointer}
+.thp-circle-x:hover{color:var(--cream)}
+.thp-circle-form{display:grid;gap:.8rem;margin:0}
+.thp-circle-form input[type=email]{width:100%;min-height:48px;padding:.7rem .9rem;border:1px solid rgba(244,238,218,.35);border-radius:0;background:transparent;color:var(--cream);font:inherit;font-size:1rem}
+.thp-circle-form input[type=email]::placeholder{color:rgba(244,238,218,.5)}
+.thp-circle-form input[type=email]:focus-visible{outline:1px solid var(--bronze);outline-offset:2px}
+.thp-circle-consent{display:grid;grid-template-columns:20px 1fr;gap:.6rem;align-items:start;font-size:.78rem;line-height:1.5;color:rgba(244,238,218,.72);cursor:pointer}
+.thp-circle-consent input{width:18px;height:18px;margin:.15rem 0 0;accent-color:var(--bronze)}
+.thp-circle-consent a{text-decoration:underline;text-underline-offset:.2em}
+.thp-circle .btn,.thp-circle-inline .btn{background:var(--bronze);color:var(--ink);border:0;cursor:pointer;min-height:48px;text-align:center}
+.thp-circle .btn:hover,.thp-circle-inline .btn:hover{background:var(--cream)}
+.thp-circle-form.busy .btn{opacity:.6;pointer-events:none}
+.thp-circle-err{margin:0;font-size:.82rem;color:#f0b9a0}
+.thp-circle-done{display:grid;gap:.8rem}
+.thp-circle-done[hidden],.thp-circle-err[hidden],.thp-circle-form[hidden]{display:none}
+.thp-circle-done p{margin:0;font-size:.93rem;line-height:1.6;color:rgba(244,238,218,.82)}
+.thp-circle-codeline{font-size:.7rem!important;letter-spacing:.24em;text-transform:uppercase}
+.thp-circle-codeline b{display:block;margin-top:.4rem;font-family:var(--serif);font-weight:400;font-size:1.9rem;letter-spacing:.14em;color:var(--cream);text-transform:none;border:1px solid rgba(244,238,218,.3);padding:.6rem .8rem;text-align:center}
+/* 20.09.2026: на телефоне карточка была шторкой снизу и читалась как баннер про куки — первый рефлекс закрыть
+   (замечание Марты). Теперь это окно по центру экрана: подложка, рамка бронзой, крупный заголовок и воздух. */
+@media (max-width:720px){
+  .thp-circle{left:50%;right:auto;top:50%;bottom:auto;transform:translate(-50%,-50%) scale(.96);width:min(420px,calc(100vw - 32px));max-height:calc(100svh - 48px);border:1px solid rgba(180,146,79,.5);padding:2.2rem 1.5rem 1.7rem;box-shadow:0 40px 90px -20px rgba(0,0,0,.7)}
+  .thp-circle.in{transform:translate(-50%,-50%) scale(1)}
+  .thp-circle h2.display{font-size:2.1rem}
+  .thp-circle-lede{font-size:.97rem}
+  .thp-circle-x{width:48px;height:48px;font-size:1.7rem}
+}
+.thp-circle-back{position:fixed;inset:0;z-index:69;background:rgba(25,24,7,.55);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s}
+.thp-circle-back.on{opacity:1;visibility:visible}
+@media (min-width:721px){ .thp-circle-back{display:none} }
+/* the same form on the /circle/ page, dark panel inside a light page */
+.thp-circle-inline{margin:2.6rem 0;padding:clamp(1.6rem,4vw,2.6rem);background:var(--ink);color:var(--cream);display:grid;gap:1rem}
+.thp-circle-inline h2.display{margin:0;font-size:clamp(1.8rem,3.4vw,2.6rem)}
+.thp-circle-inline p{margin:0;color:rgba(244,238,218,.82)}
+.thp-circle-inline .thp-circle-form{max-width:460px}
+/* the strip inside the rates block on the home page */
+.thp-circle-strip{margin-top:clamp(2rem,4vw,3rem);padding:clamp(1.4rem,3vw,2rem);border:1px solid rgba(180,146,79,.45);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1.4rem 2.4rem;align-items:center}
+.thp-circle-strip .eyebrow{color:var(--bronze);margin-bottom:.6rem}
+.thp-circle-strip p{margin:0;max-width:62ch;color:rgba(244,238,218,.82);font-size:.97rem;line-height:1.7}
+@media (max-width:720px){ .thp-circle-strip{grid-template-columns:1fr} }
+@media print{ .thp-circle{display:none} }
+/* Real booking form (20.09.2026): native date fields and selects dressed like the old static text */
+.thp-bkform input.val,.thp-bkform select.val{width:100%;min-width:0;min-height:44px;margin:0;padding:0;border:0;border-radius:0;background:transparent;color:var(--ink);font-family:var(--serif);font-size:1.12rem;line-height:1.3;cursor:pointer;-webkit-appearance:none;appearance:none;color-scheme:light}
+.thp-bkform input.val::-webkit-calendar-picker-indicator{opacity:.55;cursor:pointer;margin-left:.3rem}
+.thp-bkform input.val::-webkit-date-and-time-value{text-align:left}
+.thp-bkform select.val{background-image:linear-gradient(45deg,transparent 50%,var(--stone) 50%),linear-gradient(135deg,var(--stone) 50%,transparent 50%);background-position:calc(100% - 9px) 55%,calc(100% - 4px) 55%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:1.2rem}
+.thp-bkform .val:focus-visible{outline:1px solid var(--bronze);outline-offset:3px}
+.thp-bkform .bk-guests{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:.9rem}
+.thp-bkform button.bk-btn{border:0;cursor:pointer;display:grid;place-items:center;text-align:center;font-family:inherit}
+.thp-bkform .bk-field{min-width:0}
+.book-form.thp-bkform .bk-field label{font-size:.58rem;letter-spacing:.26em;text-transform:uppercase;color:var(--stone)}
+.booking.thp-bkform,.book-form.thp-bkform{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.5fr) auto}
+@media (max-width:1000px){ .booking.thp-bkform,.book-form.thp-bkform{grid-template-columns:1fr 1fr} .thp-bkform .bk-field:nth-child(3){grid-column:1/-1} }
+@media (max-width:560px){ .booking.thp-bkform,.book-form.thp-bkform{grid-template-columns:1fr} .thp-bkform .bk-field:nth-child(3){grid-column:auto} }
+/* The concierge chat, next to the quiz (20.09.2026) */
+.thp-chat{margin-top:clamp(2.5rem,5vw,4rem);border-top:1px solid var(--hair);padding-top:clamp(2rem,4vw,3rem);display:grid;gap:1.2rem}
+.thp-chat-head h3.display{margin:.3rem 0 .6rem;font-size:clamp(1.6rem,3vw,2.2rem)}
+.thp-chat-head p{margin:0;max-width:60ch;font-size:.95rem;line-height:1.7;color:var(--stone)}
+.thp-chat-log{display:grid;gap:.9rem}
+.thp-chat-log:empty{display:none}
+.thp-msg{max-width:min(46rem,100%);padding:.85rem 1.1rem;font-size:.97rem;line-height:1.65;white-space:pre-wrap}
+.thp-msg.me{justify-self:end;background:var(--forest);color:var(--cream)}
+.thp-msg.bot{justify-self:start;background:#fff;border:1px solid var(--hair)}
+.thp-msg.wait{color:var(--stone);font-style:italic}
+.thp-chat-hints{display:flex;flex-wrap:wrap;gap:.6rem}
+.thp-chip{border:1px solid var(--hair);background:transparent;padding:.6rem 1rem;min-height:44px;font:inherit;font-size:.85rem;color:var(--ink);cursor:pointer;text-align:left;transition:border-color .3s ease,background-color .3s ease}
+.thp-chip:hover{border-color:var(--accent);background:rgba(110,104,37,.06)}
+.thp-chat-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8rem;align-items:end}
+.thp-chat-form textarea{width:100%;min-height:52px;max-height:180px;padding:.85rem 1rem;border:1px solid var(--hair);border-radius:0;background:#fff;color:var(--ink);font:inherit;font-size:1rem;line-height:1.5;resize:none}
+.thp-chat-form textarea:focus-visible{outline:1px solid var(--bronze);outline-offset:2px}
+.thp-chat-form .btn{min-height:52px;border:0;cursor:pointer;font-family:inherit}
+.thp-chat-form.busy .btn{opacity:.6;pointer-events:none}
+.thp-chat-foot{margin:0;font-size:.82rem;color:var(--stone)}
+.on-dark .thp-chat-head p,.on-dark .thp-chat-foot{color:rgba(244,238,218,.7)}
+.on-dark .thp-msg.bot{background:rgba(244,238,218,.06);border-color:var(--hair-dark);color:var(--cream)}
+.on-dark .thp-chip{color:var(--cream);border-color:var(--hair-dark)}
+@media (max-width:640px){ .thp-chat-form{grid-template-columns:1fr} }
+/* Photo inside a programme section (20.09.2026) */
+.thp-prog-shot{margin-top:clamp(1.6rem,3vw,2.4rem);overflow:hidden;aspect-ratio:21/9}
+.thp-prog-shot img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.2,.7,.3,1)}
+.thp-prog-shot:hover img{transform:scale(1.04)}
+@media (max-width:720px){ .thp-prog-shot{aspect-ratio:3/2} }
+/* Rates block on the home page (20.09.2026): six rows, each one a link to its room */
+.thp-rates-lede{max-width:62ch;margin:1.6rem 0 0;color:rgba(244,238,218,.78);font-size:1rem;line-height:1.8}
+.thp-rates{margin-top:clamp(2rem,4vw,3rem);border-top:1px solid var(--hair-dark)}
+.thp-rate{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.4fr) auto 16px;column-gap:1.6rem;align-items:baseline;padding:1.35rem 1.2rem;border-bottom:1px solid var(--hair-dark);color:var(--cream);transition:background-color .3s ease}
+.thp-rate:hover{background:rgba(244,238,218,.05)}
+.thp-rate .nm{font-family:var(--serif);font-size:1.3rem;line-height:1.2}
+/* 23.09.2026: строка главной выгоды под названием категории (замечание Аллы: гость должен
+   понимать преимущество до того, как откроет описание). Тот же приём, что .eyebrow на /stay/. */
+.thp-rate .bn{display:block;margin-top:.5rem;font-family:var(--sans,inherit);font-style:normal;
+  font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;line-height:1.6;color:var(--bronze)}
+.thp-rate .mt{font-size:.9rem;color:rgba(244,238,218,.68)}
+.thp-rate .pr{font-family:var(--serif);font-size:1.2rem;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.thp-rate .pr small{font-family:var(--sans,inherit);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--bronze);margin-right:.35rem}
+.thp-rate .ar{color:var(--bronze);transition:transform .3s ease}
+.thp-rate:hover .ar{transform:translateX(4px)}
+.thp-rate:focus-visible{outline:1px solid var(--bronze);outline-offset:-1px}
+@media (max-width:720px){
+  .thp-rate{grid-template-columns:minmax(0,1fr) auto;row-gap:.35rem;padding:1.15rem 0}
+  .thp-rate .nm{grid-column:1;grid-row:1;font-size:1.15rem}
+  .thp-rate .pr{grid-column:2;grid-row:1;font-size:1.05rem}
+  .thp-rate .mt{grid-column:1 / 3;grid-row:2;font-size:.84rem}
+  .thp-rate .ar{display:none}
+}
+/* Large photos breathe slowly, like the home hero */
+@keyframes breathe{from{transform:scale(1.02)}to{transform:scale(1.085) translate3d(-.8%,-.6%,0)}}
+.band>img,.band>picture>img,.oia-hero>img,.oia-hero>picture>img{animation:breathe 30s ease-in-out infinite alternate}
+
+/* Phone header: the logo sits in the true centre. The side columns are unequal (burger vs button), so the grid
+   cannot centre it; the button says "Book" here to leave room. */
+.reserve .r-short{display:none}
+@media (max-width:720px){
+  .wordmark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+  .thp-topright{padding-left:0}
+  .reserve{padding:.7rem .9rem}
+  .reserve .r-long{display:none}
+  .reserve .r-short{display:inline}
+}
+@media (max-width:340px){ .topbar .wordmark .lockup,.topbar.solid .wordmark .lockup{height:19px} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .reveal{opacity:1;transform:none}
+}
+
+
+/* ── страница номера ─────────────────────────── */
+.page-hero{position:relative;height:72svh;min-height:480px;overflow:hidden;color:var(--cream)}
+.page-hero .hero-media{position:absolute;inset:0}
+.page-hero .hero-media img{width:100%;height:100%;object-fit:cover}
+.page-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(25,24,7,.72) 0%,rgba(25,24,7,.24) 34%,rgba(25,24,7,.20) 55%,rgba(25,24,7,.72) 100%)}
+.page-hero .hero-inner{position:relative;z-index:2;height:100%;display:grid;align-content:end;justify-items:start;text-align:left;padding:0 var(--gutter) 4.5rem;text-shadow:0 2px 24px rgba(25,24,7,.5)}
+.page-hero h1.display{font-size:clamp(2.6rem,6vw,5.4rem);margin:1.1rem 0 0}
+.page-hero .tagline{margin-top:1.2rem;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(244,238,218,.85)}
+.specs-bar .pernight{font-family:var(--sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--stone)}
+.wrap.narrow{max-width:820px}
+.room-copy{padding-bottom:calc(var(--band) * .6)}
+.room-copy .lede{margin:0 0 1.4rem}
+.room-copy p{margin:0 0 1.1rem}
+.room-gallery{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.room-gallery .g-shot{overflow:hidden;aspect-ratio:16/10}
+.room-gallery .g-shot img{width:100%;height:100%;object-fit:cover}
+.know-list{list-style:none;margin:1.6rem 0 0;padding:0;display:grid;gap:.9rem;max-width:62ch}
+.know-list li{padding-left:1.4rem;position:relative;font-size:.95rem;line-height:1.75;color:rgba(244,238,218,.8)}
+.know-list li::before{content:"";position:absolute;left:.15rem;top:.78em;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+/* Links inside running text (19.09.2026). They had the colour of the text and an underline at 1.4:1 contrast,
+   or no underline at all, so nobody could see them. Now: a real underline, patina on light, bronze on dark. */
+main p a:not(.btn),main li a:not(.btn),.inline-link{color:inherit;border-bottom:0;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.24em;text-decoration-color:var(--patina);transition:text-decoration-color .3s}
+main p a:not(.btn):hover,main li a:not(.btn):hover,.inline-link:hover{text-decoration-color:currentColor}
+.on-dark p a:not(.btn),.on-dark li a:not(.btn),.on-dark .inline-link,.deep p a:not(.btn),.deep li a:not(.btn),.deep .inline-link{text-decoration-color:var(--bronze)}
+main .foot-grid a:not(.btn),main .contact-grid a:not(.btn){text-decoration:none}
+.card h3 a{color:inherit}
+@media (max-width:720px){
+  .room-gallery{grid-template-columns:1fr}
+  .page-hero .hero-inner{padding-bottom:3rem}
+}
+
+
+/* ── Villa Oia и обзор /stay ─────────────── */
+.oia-hero{position:relative;height:min(84svh,860px);min-height:540px;overflow:hidden;color:var(--cream);display:grid;align-items:end}
+.oia-hero>picture{display:contents}
+.oia-hero>img,.oia-hero>picture>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.oia-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(25,24,7,.78) 0%,rgba(25,24,7,.22) 26%,rgba(25,24,7,.30) 55%,rgba(25,24,7,.9) 100%)}
+.oia-hero .hero-body{position:relative;z-index:2;padding:0 var(--gutter) clamp(2.5rem,5vw,4rem);display:grid;gap:1.2rem;text-shadow:0 2px 22px rgba(25,24,7,.55)}
+.oia-hero h1.display{font-size:clamp(2.8rem,7.4vw,7rem);line-height:.98}
+.crumb{display:flex;gap:.8rem;align-items:center;font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:rgba(244,238,218,.7)}
+.crumb a:hover{color:var(--accent)}
+.hero-body .kicker{font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;color:rgba(244,238,218,.85);max-width:44ch;line-height:1.9}
+.specs{background:var(--forest);color:var(--cream);display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.spec{padding:1.9rem 1.4rem;border-right:1px solid var(--hair-dark);display:grid;gap:.5rem;justify-items:center;text-align:center}
+.spec:last-child{border-right:0}
+.spec .n{font-family:var(--serif);font-size:clamp(1.5rem,2.2vw,2rem);line-height:1;color:var(--cream)}
+.spec .l{font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,238,218,.6)}
+.head.center{justify-items:center;text-align:center;margin-inline:auto}
+.intro-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(2.5rem,5vw,5rem);align-items:center}
+.intro-grid .head{display:grid;gap:1.4rem;max-width:900px;justify-items:start;text-align:left}
+.plan{width:100%;height:auto}
+.plan text{font-family:var(--sans);font-size:15px;letter-spacing:2.4px;fill:var(--stone);text-transform:uppercase}
+.plan .lead{fill:var(--accent)}
+.rail{display:flex;gap:clamp(.8rem,1.4vw,1.4rem);overflow-x:auto;padding-bottom:1.2rem;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--accent) rgba(110,104,37,.30)}
+.rail figure{margin:0;flex:0 0 clamp(230px,26vw,380px);scroll-snap-align:start}
+.rail img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.rail figcaption{margin-top:.9rem;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--stone)}
+.rail::-webkit-scrollbar{height:2px}
+.rail::-webkit-scrollbar-track{background:rgba(110,104,37,.30)}
+.rail::-webkit-scrollbar-thumb{background:var(--accent)}
+.beds{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:clamp(1.4rem,2.4vw,2.4rem);margin-top:clamp(2.5rem,5vw,4rem)}
+.bed{display:grid;gap:1rem;align-content:start}
+.bed .shot{overflow:hidden;aspect-ratio:3/2}
+.bed .shot img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.3,1)}
+.bed:hover .shot img{transform:scale(1.055)}
+.bed .meta{font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,238,218,.6)}
+.bed p{margin:0;font-size:.93rem;line-height:1.75;color:rgba(244,238,218,.75)}
+.duo.flip .shot{order:2}
+.incl{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(2rem,4vw,3.5rem);margin-top:clamp(2.5rem,5vw,3.5rem)}
+.incl h4{margin:0 0 1.2rem;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:400}
+.incl ul{list-style:none;margin:0;padding:0;display:grid;gap:.85rem}
+.incl li{display:grid;grid-template-columns:auto 1fr;gap:.9rem;align-items:baseline;font-size:.94rem;line-height:1.7;color:var(--stone)}
+.incl li::before{content:"";width:5px;height:5px;border:1px solid var(--accent);transform:rotate(45deg);translate:0 -2px}
+.day{display:grid;gap:0;margin-top:clamp(2.5rem,5vw,3.5rem);border-top:1px solid var(--hair)}
+.day-row{display:grid;grid-template-columns:130px 1fr;gap:clamp(1.5rem,3vw,3rem);padding:1.6rem 0;border-bottom:1px solid var(--hair);align-items:baseline}
+.day-row .t{font-family:var(--serif);font-size:1.15rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.day-row .d{margin:0;font-size:.98rem;line-height:1.8;color:var(--stone);max-width:66ch}
+.rates{margin-top:clamp(2.5rem,5vw,3.5rem);width:100%;overflow-x:auto}
+.rates table{border-collapse:collapse;width:100%;min-width:600px;color:inherit}
+.rates th,.rates td{text-align:left;padding:1.25rem 1.2rem;border-bottom:1px solid var(--hair-dark);font-size:.95rem;color:rgba(244,238,218,.78)}
+.rates th{font-weight:400;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--bronze)}
+.rates td:first-child{font-family:var(--serif);font-size:1.08rem;color:var(--cream)}
+.rates td.num{font-family:var(--serif);font-size:1.08rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--cream)}
+.rates tr:last-child td{border-bottom:0}
+.rate-note{margin-top:1.4rem;font-size:.86rem;color:rgba(244,238,218,.6);max-width:70ch}
+/* Spa menu — list that opens on tap (18.09.2026). Replaces the .rates table on /wellbeing/spa/:
+   descriptions need the full width, and the table scrolled sideways on a phone. */
+.spa-hint{margin-top:1.6rem;font-size:.86rem;color:rgba(244,238,218,.6)}
+.spa-menu{margin-top:1.2rem}
+.spa-head,.spa-row{display:grid;grid-template-columns:minmax(0,1fr) 8.5rem 13.5rem 12px;column-gap:1.4rem;align-items:baseline}
+.spa-head{padding:0 1.2rem 1rem;border-bottom:1px solid var(--hair-dark);font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--bronze)}
+.spa-item{border-bottom:1px solid var(--hair-dark)}
+.spa-item:last-child{border-bottom:0}
+.spa-item summary{list-style:none;cursor:pointer;padding:1.25rem 1.2rem;min-height:44px;transition:background .3s}
+.spa-item summary::-webkit-details-marker{display:none}
+.spa-item summary:hover{background:rgba(244,238,218,.04)}
+.spa-item summary:focus-visible{outline:1px solid var(--bronze);outline-offset:-1px}
+.spa-name,.spa-price{font-family:var(--serif);font-size:1.08rem;color:var(--cream)}
+.spa-price{font-variant-numeric:tabular-nums;white-space:nowrap}
+.spa-dur{font-size:.95rem;color:rgba(244,238,218,.78);white-space:nowrap}
+.spa-toggle{position:relative;width:12px;height:12px;align-self:center}
+.spa-toggle::before,.spa-toggle::after{content:"";position:absolute;left:0;top:50%;width:12px;height:1px;background:var(--bronze);transition:transform .3s}
+.spa-toggle::after{transform:rotate(90deg)}
+.spa-item[open] .spa-toggle::after{transform:rotate(0)}
+.spa-desc{padding:0 1.2rem 1.6rem;max-width:64ch;font-size:.95rem;line-height:1.75;color:rgba(244,238,218,.78)}
+.spa-desc p{margin:0}
+.spa-desc p+p{margin-top:.6rem}
+.spa-item[open] summary{padding-bottom:.9rem}
+@media (max-width:720px){
+  .spa-head{display:none}
+  .spa-menu{border-top:1px solid var(--hair-dark)}
+  .spa-row{grid-template-columns:max-content minmax(0,1fr) 12px;column-gap:1rem;row-gap:.35rem}
+  .spa-name{grid-column:1 / 3;grid-row:1}
+  .spa-toggle{grid-column:3;grid-row:1}
+  .spa-dur{grid-column:1;grid-row:2;font-size:.86rem}
+  .spa-price{grid-column:2;grid-row:2;font-size:1rem}
+  .spa-dur:empty{display:none}
+  .spa-dur:empty+.spa-price{grid-column:1 / 3}
+  .spa-item summary,.spa-desc{padding-left:0;padding-right:0}
+}
+.book{position:relative;overflow:hidden;color:var(--cream);text-align:center}
+.book>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.book::after{content:"";position:absolute;inset:0;background:rgba(25,24,7,.8)}
+.book .wrap{position:relative;z-index:2;display:grid;gap:1.8rem;justify-items:center}
+.book-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;background:var(--paper);color:var(--ink);border:1px solid var(--hair);width:min(100%,1000px);text-align:left}
+.book-form .bk-field{border-right:1px solid var(--hair)}
+.book-form .bk-field span{font-size:.58rem;letter-spacing:.26em;text-transform:uppercase;color:var(--stone)}
+.book-form .bk-field b{font-family:var(--serif);font-size:1.1rem;font-weight:400}
+.also{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(1.4rem,2.4vw,2.4rem);margin-top:clamp(2.5rem,5vw,3.5rem)}
+.also .card{display:grid;gap:.9rem;align-content:start}
+.also .shot{overflow:hidden;aspect-ratio:3/2}
+.also .shot img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.3,1)}
+.also .card:hover .shot img{transform:scale(1.055)}
+.also .meta{font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--stone)}
+.also .rate{font-family:var(--serif);font-size:1rem}
+.also .rate small{font-family:var(--sans);font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:var(--stone);margin-right:.5rem}
+.compare{margin-top:clamp(3rem,6vw,5rem);overflow-x:auto}
+.compare table{border-collapse:collapse;width:100%;min-width:760px}
+.compare th,.compare td{text-align:left;padding:1.1rem 1.2rem;border-bottom:1px solid var(--hair);font-size:.95rem;color:var(--stone)}
+.compare th{font-weight:400;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--patina)}
+.compare td:first-child{font-family:var(--serif);font-size:1.05rem;color:var(--ink)}
+.compare td:first-child a:hover{color:var(--patina)}
+.compare td.num{font-family:var(--serif);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
+.stay-hero{height:min(64svh,640px)}
+@media (max-width:1000px){
+  .intro-grid{grid-template-columns:1fr}
+  .duo.flip .shot{order:0}
+  .book-form{grid-template-columns:1fr 1fr}
+  .book-form .bk-field:nth-child(2){border-right:0}
+  .book-form .bk-field:nth-child(3){border-right:0;border-top:1px solid var(--hair)}
+  .book-form .bk-btn{grid-column:1/-1}
+}
+@media (max-width:720px){
+  .spec{border-right:0;border-bottom:1px solid var(--hair-dark)}
+  .book-form{grid-template-columns:1fr}
+  .book-form .bk-field{border-right:0;border-bottom:1px solid var(--hair)}
+  .day-row{grid-template-columns:1fr;gap:.5rem}
+}
+
+
+/* ── The Valley ─────────────────────────────── */
+.rule-list{list-style:none;margin:.6rem 0 1.6rem;padding:0;display:grid;gap:.9rem;max-width:62ch}
+.rule-list li{padding-left:1.4rem;position:relative;font-size:.97rem;line-height:1.75;color:var(--stone)}
+.rule-list li::before{content:"";position:absolute;left:.15rem;top:.78em;width:5px;height:5px;border-radius:50%;background:var(--patina)}
+.on-dark .rule-list li{color:rgba(244,238,218,.8)}
+.on-dark .rule-list li::before{color:var(--patina-lt)}
+
+
+/* ── логотип в шапке ────────────────────────── */
+/* 20.09.2026: the six links left the bar, the logo is centred and larger; it shrinks once the bar turns solid */
+.wordmark .lockup{height:46px;width:auto;display:block;margin:0 auto;transition:height .5s ease}
+.topbar.solid .wordmark .lockup,.topbar.menu-open .wordmark .lockup{height:30px}
+@media (max-width:1000px){ .wordmark .lockup{height:34px} .topbar.solid .wordmark .lockup{height:26px} }
+@media (max-width:720px){ .wordmark .lockup{height:24px} .topbar.solid .wordmark .lockup{height:22px} }
+
+
+/* ── контакты ───────────────────────────────── */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem)}
+.contact-list{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:.9rem}
+.contact-list li{font-family:var(--serif);font-size:1.15rem;line-height:1.6}
+.contact-list a{border-bottom:1px solid var(--hair);transition:border-color .3s}
+.contact-list a:hover{border-color:var(--patina)}
+@media (max-width:720px){ .contact-grid{grid-template-columns:1fr} }
+
+/* ===== 26.08.2026: intent tiles, programs landing, good-to-know, accessibility ===== */
+.btn{display:inline-block;padding:.85rem 1.6rem;background:var(--ink);color:var(--cream);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;font-weight:600}
+.btn:hover{background:var(--forest-2)}
+.thp-quiz{display:flex;flex-direction:column;gap:1.4rem;margin-top:1rem}
+.thp-quiz-label{font-size:.8rem;font-weight:600;letter-spacing:.04em;margin-bottom:.6rem}
+.thp-quiz-opts{display:flex;flex-wrap:wrap;gap:.6rem}
+.thp-quiz-opts button{padding:.7rem 1.15rem;border:1px solid var(--hair);background:#fff;color:var(--ink);font-size:.85rem;cursor:pointer;font-family:inherit}
+.thp-quiz-opts button.on{background:var(--forest-2);border-color:var(--forest-2);color:var(--cream)}
+.thp-quiz-result{background:var(--forest-2);padding:1.5rem 1.6rem;color:var(--cream)}
+.thp-quiz-result .eyebrow.light{color:var(--bronze)}
+.thp-quiz-name{font-family:var(--serif);font-size:1.7rem;margin:.3rem 0 .4rem}
+.thp-quiz-result p{color:rgba(244,238,218,.78);font-size:.9rem;line-height:1.55;margin:0 0 1rem}
+.thp-quiz-result .btn{background:var(--cream);color:var(--ink)}
+.thp-quiz-hint{border:1px dashed var(--hair);padding:1.1rem 1.3rem;font-size:.85rem;color:var(--stone)}
+.thp-prog-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:1.6rem 0}
+.thp-prog{border:1px solid var(--hair);background:#fff;padding:1.4rem 1.4rem 1.2rem}
+.thp-prog>img{display:block;width:calc(100% + 2.8rem);max-width:none;margin:-1.4rem -1.4rem 1.1rem;aspect-ratio:3/2;object-fit:cover}
+.thp-prog h3{font-family:var(--serif);font-size:1.5rem;font-weight:400;margin:.35rem 0 .55rem}
+.thp-prog p{font-size:.87rem;line-height:1.6;color:var(--stone);margin:0}
+@media(max-width:800px){.thp-prog-grid{grid-template-columns:1fr}}
+.thp-price-note{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;border:1px solid var(--hair);background:#fff;padding:1.3rem 1.5rem;flex-wrap:wrap}
+.thp-price-note p{margin:.3rem 0 0;font-size:.88rem;color:var(--stone);max-width:34rem}
+.thp-facts{list-style:none;padding:0;margin:1rem 0 1.4rem;display:flex;flex-direction:column;gap:.65rem}
+.thp-facts li{padding-left:1.1rem;position:relative;font-size:.92rem;line-height:1.55}
+.thp-facts li::before{content:'';position:absolute;left:0;top:.62em;width:5px;height:5px;background:var(--accent)}
+.thp-know-block{margin:2.2rem 0}
+.thp-know-block h2{font-family:var(--serif);font-size:1.6rem;font-weight:400;margin:0 0 .7rem}
+.thp-know-block p,.thp-know-block li{font-size:.94rem;line-height:1.62}
+.thp-table{border-collapse:collapse;margin:.8rem 0;width:100%;max-width:30rem}
+.thp-table td{border-bottom:1px solid var(--hair);padding:.5rem .2rem;font-size:.9rem}
+.thp-table td:last-child{text-align:right;white-space:nowrap}
+.thp-small{font-size:.8rem;color:var(--stone)}
+.thp-programs-lede{font-size:1.35rem;line-height:1.6;max-width:36rem;margin:0 0 2.4rem}
+@media(max-width:640px){.thp-programs-lede{font-size:1.15rem}}
+.section.thp-tight{padding-top:3.2rem;padding-bottom:3.2rem}
+#retreats h2, #quiz h2{font-family:var(--serif);font-size:2.1rem;font-weight:400;margin:.4rem 0 1rem;letter-spacing:0}
+.thp-topright{display:flex;align-items:center;gap:1.1rem;justify-self:end;padding-left:24px}
+.thp-result-ctas{display:flex;gap:.8rem;flex-wrap:wrap}
+.btn.ghost{background:transparent;border:1px solid rgba(244,238,218,.4);color:var(--cream)}
+.btn.ghost:hover{border-color:var(--cream);background:transparent}
+.thp-offers{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;opacity:.72;border-bottom:1px solid currentColor;padding-bottom:2px;white-space:nowrap;transition:opacity .2s ease}
+.thp-offers:hover{opacity:1}
+@media(max-width:999px){.thp-offers{display:none}}
+/* — Gallery — */
+/* 20.09.2026: была кладка колонками, и кадры 4:3 выходили выше кадров 3:2 — ряды рвались.
+   Теперь сетка с общей пропорцией: все карточки одного размера, ряды ровные. */
+.thp-gal { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-top: 1.6rem; }
+.thp-gal figure { margin: 0; cursor: pointer; overflow: hidden; }
+.thp-gal img { width: 100%; height: 100%; display: block; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 2px; }
+.thp-gal figure:hover img { opacity: .92; }
+@media (max-width: 900px) { .thp-gal { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 560px) { .thp-gal { grid-template-columns: 1fr; } }
+.thp-lb { position: fixed; inset: 0; background: rgba(25,20,10,.96); display: none; align-items: center; justify-content: center; z-index: 999; }
+.thp-lb.open { display: flex; }
+.thp-lb img { max-width: 92vw; max-height: 88vh; display: block; }
+.thp-lb button { position: absolute; background: none; border: 0; color: #F4EEDA; font-size: 2.2rem; line-height: 1; cursor: pointer; padding: 1rem; z-index: 2; }
+.thp-lb .lb-x { top: 10px; right: 14px; }
+.thp-lb .lb-p { left: 4px; top: 50%; transform: translateY(-50%); }
+.thp-lb .lb-n { right: 4px; top: 50%; transform: translateY(-50%); }
+/* 20.09.2026: лайтбокс стал общим для всех галерей — подпись, счётчик и зоны нажатия 44px */
+.thp-lb img { max-width: 94vw; max-height: 84vh; }
+.thp-lb button { min-width: 44px; min-height: 44px; }
+.thp-lb .lb-cap { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; color: rgba(244,238,218,.8); font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; padding: 0 3rem; }
+@media (max-width: 720px){ .thp-lb .lb-p, .thp-lb .lb-n { display: none; } .thp-lb img { max-height: 78vh; } }
+/* — Badge — */
+.card .shot { position: relative; }
+.thp-badge { position: absolute; top: 12px; left: 12px; z-index: 2; background: var(--bronze); color: #1C1A0D; font-size: .58rem; letter-spacing: .22em; text-transform: uppercase; padding: .5em .95em; font-weight: 600; }
+/* — /stay/ vertical room blocks (30.08.2026) — */
+.thp-room-block { padding-top: clamp(3rem,6vw,5rem); padding-bottom: clamp(3rem,6vw,5rem); }
+.thp-room-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+.thp-room-head h2.display { margin-top: .4rem; }
+.thp-badge-inline { position: static; align-self: center; }
+.thp-gal-wrap { position: relative; margin-top: clamp(1.6rem,3vw,2.4rem); }
+.thp-room-gal { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.thp-room-gal::-webkit-scrollbar { display: none; }
+.thp-room-gal figure { margin: 0; flex: 0 0 100%; scroll-snap-align: center; aspect-ratio: 3/2; overflow: hidden; }
+.thp-room-gal img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thp-gal-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(244,238,218,.5); background: rgba(25,24,7,.4); color: #F4EEDA; display: grid; place-items: center; cursor: pointer; z-index: 3; transition: background-color .3s ease, opacity .3s ease; }
+.thp-gal-nav:hover { background: rgba(25,24,7,.72); }
+.thp-gal-nav[hidden] { display: none; }
+.thp-gal-prev { left: 14px; }
+.thp-gal-next { right: 14px; }
+.thp-gal-nav svg { width: 13px; height: 13px; }
+.thp-gal-count { position: absolute; right: 14px; bottom: 14px; z-index: 3; font-size: .6rem; letter-spacing: .18em; background: rgba(25,24,7,.5); color: #F4EEDA; padding: .35em .7em; }
+.thp-gal-dots { display: flex; gap: 7px; justify-content: center; margin-top: .9rem; }
+.thp-gal-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--hair); display: block; transition: background-color .3s ease; }
+.on-dark .thp-gal-dots i, .deep .thp-gal-dots i { background: rgba(244,238,218,.28); }
+.thp-gal-dots i.on { background: var(--accent); }
+.on-dark .thp-gal-dots i.on, .deep .thp-gal-dots i.on { background: var(--bronze); }
+@media (max-width: 720px) { .thp-gal-nav { display: none; } }
+.thp-amen { list-style: none; margin: 1.6rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem 1.6rem; font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--stone); }
+.on-dark .thp-amen { color: rgba(244,238,218,.68); }
+.thp-amen li { position: relative; padding-left: 1rem; }
+.thp-amen li::before { content: ''; position: absolute; left: 0; top: .45em; width: 5px; height: 5px; background: var(--accent); }
+.thp-room-foot { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.8rem; padding-top: 1.4rem; border-top: 1px solid var(--hair); }
+.on-dark .thp-room-foot, .deep .thp-room-foot { border-top-color: var(--hair-dark); }
+.thp-room-facts { font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--stone); }
+.on-dark .thp-room-facts, .deep .thp-room-facts { color: rgba(244,238,218,.6); }
+.thp-room-cta { display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; }
+@media (max-width: 900px) { .thp-room-gal { grid-template-columns: repeat(2, minmax(0,1fr)); } .thp-room-gal figure.lead { grid-column: span 2; grid-row: auto; aspect-ratio: 3/2; } }
+
+/* ── 20.09.2026 — герой главной на телефоне ───────────────────────────────
+   Было: вертикальный кроп на весь экран, форма бронирования наползала снизу.
+   Стало (решение Марты): тот же кадр горизонтально, полосой сверху; под ним заголовок
+   на бумажном фоне, дальше даты. На компьютере всё как было. */
+@media (max-width:720px){
+  .hero{height:auto;min-height:0;overflow:visible;color:var(--ink)}
+  .hero-media{position:relative;overflow:hidden}
+  .hero-media picture{display:block}
+  .hero-media img{height:auto;aspect-ratio:3/2;animation:breathe 30s ease-in-out infinite alternate}
+  .hero::after{display:none}
+  /* затемнение только по верху снимка, чтобы читались логотип и бургер */
+  .hero-media::after{content:"";position:absolute;left:0;right:0;top:0;height:52%;pointer-events:none;
+    background:linear-gradient(180deg,rgba(25,24,7,.82) 0%,rgba(25,24,7,.46) 34%,rgba(25,24,7,.14) 70%,rgba(25,24,7,0) 100%)}
+  .hero-inner{height:auto;padding:1.9rem var(--gutter) 0;text-shadow:none;color:var(--ink)}
+  .hero .eyebrow{color:var(--stone)}
+  .hero h1{margin:.85rem 0 0;font-size:clamp(2.4rem,10.5vw,3.3rem)}
+  .hero h1 em{color:var(--ink)}
+  .hero .tagline{margin-top:.95rem;color:var(--stone)}
+  .hero-foot{display:none}
+  .booking-wrap{margin-top:1.7rem}
+}
+
+/* 20.09.2026: цена и категория номера в карточке программы (финмодель из таблицы Марты) */
+.thp-prog-foot{display:flex;flex-wrap:wrap;gap:.4rem 1.6rem;margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--hair);font-size:.82rem;color:var(--ink)}
+.thp-prog-foot .k{display:block;font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:var(--stone);margin-bottom:.2rem}
+.thp-lvl-price{margin:.1rem 0 .7rem;font-family:var(--serif);font-size:1.02rem;color:inherit}
+.on-dark .thp-lvl-price{color:var(--cream)}
+.thp-prog-room{margin-top:.7rem;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--stone)}
+.on-dark .thp-prog-room{color:rgba(244,238,218,.7)}
+
+/* 20.09.2026: у программ короткие колонки включений, и штатные 144 px снизу читались как дыра.
+   Поджимаем низ этих секций и верх следующей за ними; сверху отступ оставляем, он держит заголовок. */
+.thp-prog-sec{padding-bottom:clamp(3.2rem,6vw,5.5rem)}
+.thp-prog-sec + .section{padding-top:clamp(3.2rem,6vw,5.5rem)}
+.thp-prog-sec .incl{margin-top:clamp(1.8rem,3.4vw,2.6rem)}
+
+/* 20.09.2026: список включений был всегда кремовым — наследие тех времён, когда такие секции были
+   только тёмными. В каталоге программ секции чередуются, и на светлых текст становился невидимым:
+   кремовый по кремовому. Теперь по умолчанию читаемый цвет, а кремовый только на тёмном фоне. */
+.incl li{color:#777456}   /* тот же оттенок, что --stone, но темнее: 4,5:1 вместо 3,8:1 при кегле 15px */
+.on-dark .incl li,.deep .incl li{color:rgba(244,238,218,.8)}
+
+/* 20.09.2026: у страниц без фотографии в шапке (клуб, приватность, условия, куки) кремовый текст
+   ложился на бумажный фон сквозь полупрозрачный градиент — логотип и надкатегория почти пропадали.
+   Такой шапке даём тёмную основу: градиент поверх неё работает как задумано. */
+.oia-hero:not(:has(img)):not(:has(picture)){background:var(--ink)}
+
+/* 20.09.2026: три вертикальных кадра в ряд — для программ, где сюжет вертикальный (Мелукат). */
+.thp-prog-trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(6px,.8vw,14px);margin-top:clamp(1.8rem,3.4vw,2.6rem)}
+.thp-prog-trio img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover}
+
+/* 21.09.2026: вертикальный кадр в ленте номера — ячейка на две строки, высоту задают соседи.
+   На телефоне колонка одна, поэтому там просто пропорция 4:5. */
+.room-gallery .g-shot.tall{aspect-ratio:auto;grid-row:span 2}
+@media (max-width:720px){ .room-gallery .g-shot.tall{grid-row:auto;aspect-ratio:4/5} }
+
+/* ── 21.09.2026: консьерж со всех страниц ─────────────────────────────────
+   Кнопка внизу слева: справа живёт карточка клуба, по центру док. */
+.thp-fab{position:fixed;left:clamp(12px,2vw,28px);bottom:clamp(12px,2vw,28px);z-index:60;
+  display:flex;align-items:center;gap:.6rem;min-height:48px;padding:.7rem 1.15rem;
+  background:var(--ink);color:var(--cream);border:1px solid rgba(244,238,218,.22);cursor:pointer;
+  font:inherit;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.6);transition:background-color .35s ease}
+.thp-fab:hover{background:var(--forest)}
+.thp-fab svg{width:17px;height:17px;display:block}
+.thp-fab[hidden]{display:none}
+.thp-chat-dock{position:fixed;left:clamp(12px,2vw,28px);bottom:calc(clamp(12px,2vw,28px) + 60px);z-index:61;
+  width:min(430px,calc(100vw - 24px));max-height:min(640px,calc(100svh - 120px));overflow:auto;
+  background:var(--paper);border:1px solid var(--hair);box-shadow:0 34px 80px -24px rgba(25,24,7,.55);
+  padding:0 1.3rem 1.3rem}
+.thp-chat-dock[hidden]{display:none}
+.thp-chat-dock-bar{position:sticky;top:0;z-index:2;background:var(--paper);display:flex;align-items:center;
+  justify-content:space-between;gap:1rem;padding:.9rem 0 .7rem;border-bottom:1px solid var(--hair);
+  font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--stone)}
+.thp-chat-x{border:0;background:none;color:var(--stone);font-size:1.6rem;line-height:1;cursor:pointer;
+  width:44px;height:44px;display:grid;place-items:center}
+.thp-chat-x:hover{color:var(--ink)}
+/* внутри панели заголовок и подсказки лишние: место дорогое */
+.thp-chat-dock .thp-chat{margin-top:.9rem;border-top:0;padding-top:0;gap:.9rem}
+.thp-chat-dock .thp-chat-head h3,.thp-chat-dock .thp-chat-head .eyebrow{display:none}
+.thp-chat-dock .thp-chat-head p{font-size:.86rem}
+@media (max-width:720px){
+  .thp-fab .thp-fab-t{display:none}
+  .thp-fab{padding:.8rem;min-width:48px;justify-content:center}
+  .thp-chat-dock{left:12px;right:12px;width:auto;bottom:calc(12px + 60px);max-height:calc(100svh - 150px)}
+}
+
+/* ── 22.09.2026: развилка «by room / by programme» в кнопке брони ───────── */
+.thp-resv{position:relative}
+.thp-resv .reserve{display:inline-flex;align-items:center;gap:.55rem;cursor:pointer;font:inherit;
+  font-size:.6rem;letter-spacing:.24em;text-transform:uppercase}
+.thp-resv .r-caret{width:9px;height:6px;opacity:.7;transition:transform .3s ease}
+.thp-resv[data-open] .r-caret{transform:rotate(180deg)}
+.thp-resv-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:268px;
+  background:var(--paper);border:1px solid var(--hair);box-shadow:0 26px 60px -26px rgba(25,24,7,.5);
+  display:grid}
+.thp-resv-menu[hidden]{display:none}
+.thp-resv-menu a{display:grid;gap:.25rem;padding:.95rem 1.15rem;border-bottom:1px solid var(--hair);
+  text-align:left;transition:background-color .3s ease}
+.thp-resv-menu a:last-child{border-bottom:0}
+.thp-resv-menu a:hover{background:#F2EEE4}
+.thp-resv-menu strong{font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);font-weight:400}
+.thp-resv-menu span{font-family:var(--serif);font-size:.95rem;line-height:1.35;color:var(--stone)}
+@media (max-width:720px){ .thp-resv-menu{min-width:min(280px,calc(100vw - 24px))} }
+/* 22.09.2026: «как идёт день» в программе */
+.thp-day{margin-top:clamp(2rem,4vw,3rem);padding-top:clamp(1.6rem,3vw,2.2rem);border-top:1px solid var(--hair)}
+.on-dark .thp-day{border-top-color:var(--hair-dark)}
+.thp-day .incl{margin-top:1.1rem;gap:clamp(1.6rem,3vw,2.6rem)}
+.thp-day-note{margin:1.2rem 0 0;font-size:.82rem;color:var(--stone);max-width:62ch}
+.on-dark .thp-day-note{color:rgba(244,238,218,.6)}
+
+/* 22.09.2026: переход к форме бронирования по якорю #book. Браузер подводит якорь к самому верху
+   экрана, а сверху висит закреплённая шапка и накрывает форму (замечание владельца задачи).
+   Отступ берём по высоте шапки плюс воздух, чтобы над полями было видно, куда попал. */
+.booking-wrap{scroll-margin-top:calc(var(--topbar-h,84px) + 28px)}
+@media (max-width:720px){ .booking-wrap{scroll-margin-top:calc(var(--topbar-h,72px) + 16px)} }
+
+/* 23.09.2026: цифры отзывов под заголовком блока «Words from our guests» (источник Booking.com, см. front-page.php) */
+.thp-rev-stats{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:1.2rem clamp(1.6rem,4vw,3.2rem)}
+.thp-rev-stats li{display:grid;justify-items:center;gap:.3rem}
+.thp-rev-stats b{font-family:var(--serif);font-weight:400;font-size:clamp(1.6rem,3vw,2.3rem);line-height:1;color:var(--cream);font-variant-numeric:tabular-nums}
+.thp-rev-stats span{font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,238,218,.6)}
+/* 23.09.2026: значки наград в подвале; список в front-page.php, только полученные награды */
+.thp-awards{list-style:none;max-width:1400px;margin:clamp(2rem,4vw,3rem) auto 0;padding:0;display:flex;flex-wrap:wrap;gap:.8rem}
+.thp-awards li{display:flex}
+.thp-awards li>a,.thp-awards li>span,.thp-awards li>img{display:inline-flex;align-items:center;gap:.7rem}
+.thp-awards li>a{border:1px solid var(--hair-dark);padding:.55rem .9rem;color:rgba(244,238,218,.8);text-decoration:none}
+.thp-awards li>span{border:1px solid var(--hair-dark);padding:.55rem .9rem;color:rgba(244,238,218,.8)}
+.thp-awards span{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase}
+.thp-awards b{font-weight:400;color:var(--bronze)}
+.thp-awards img{height:28px;width:auto}
+/* 23.09.2026: страница «подходит ли вам», две колонки: подходит / скорее нет */
+.thp-fit{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.6rem,4vw,3.5rem);max-width:1100px;margin:0 auto}
+.thp-fit-col{border-top:1px solid var(--hair);padding-top:1.4rem}
+.thp-fit-col .eyebrow{margin-bottom:.4rem}
+.thp-fit-no .eyebrow{color:var(--bronze)}
+.thp-fit-no .thp-facts li::before{background:var(--bronze)}
+@media (max-width:720px){.thp-fit{grid-template-columns:1fr}}
+/* 23.09.2026: пара вертикальных кадров с макаками под интро на главной; одиночный кадр в FAQ «The monkeys» */
+.thp-duo-shots{display:grid;grid-template-columns:1fr 1fr;gap:clamp(.8rem,2vw,1.6rem);max-width:1100px;margin:clamp(2.4rem,5vw,4rem) auto 0}
+.thp-duo-shots figure{margin:0;overflow:hidden;aspect-ratio:2/3}
+.thp-duo-shots img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.4s cubic-bezier(.2,.7,.3,1)}
+.thp-duo-shots figure:hover img{transform:scale(1.03)}
+.thp-duo-shots figcaption{margin-top:.7rem;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--bronze)}
+.thp-know-shot{margin:0 0 1.4rem;aspect-ratio:3/2;overflow:hidden}
+.thp-know-shot img{width:100%;height:100%;object-fit:cover;object-position:50% 60%;display:block}
+@media (max-width:720px){.thp-duo-shots{grid-template-columns:1fr 1fr;gap:.6rem}.thp-duo-shots figcaption{font-size:.54rem;letter-spacing:.18em}}
+/* 23.09.2026: развилка намерений в герое главной и блок «Beyond the room» под формой дат */
+.hero-ctas{display:flex;flex-wrap:wrap;justify-content:center;gap:.8rem;margin-top:2.2rem}
+.hero-ctas .btn{display:grid;gap:.25rem;justify-items:center;padding:.9rem 1.5rem;min-width:200px;text-align:center}
+.hero-ctas .btn strong{font-weight:600;letter-spacing:.18em}
+.hero-ctas .btn span{font-size:.58rem;letter-spacing:.14em;text-transform:none;letter-spacing:.06em;opacity:.8;font-weight:400}
+.booking-wrap + .thp-day{padding-top:clamp(3rem,6vw,5rem)}
+.thp-day .card .shot{display:block}
+.thp-day .card h3 a{color:inherit;text-decoration:none}
+.thp-day .card h3 a:hover{color:var(--patina)}
+@media (max-width:720px){
+  .hero-ctas{margin-top:1.6rem;gap:.6rem}
+  .hero-ctas .btn{min-width:0;flex:1 1 45%;padding:.8rem .6rem}
+  .hero-ctas .btn.ghost{border-color:rgba(25,24,7,.35);color:var(--ink)}
+  .hero-ctas .btn.ghost:hover{border-color:var(--ink)}
+}

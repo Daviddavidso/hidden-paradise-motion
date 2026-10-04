@@ -1,0 +1,26 @@
+/* Demo only: the before/after switch and its note. Right edge, in the upper third: the corners and the bottom
+   centre belong to the site's own widgets (concierge, contact bar, members' card). It sits BELOW every site widget
+   (z-index 59: topbar and concierge 60, chat 61, members' card 69–70, menu 80), so when one of them opens over
+   it, the widget wins and gets the clicks; while the members' card is open the switch also moves up out of its way. */
+.thp-demo{position:fixed;right:0;top:30%;z-index:59;display:flex;flex-direction:column;align-items:flex-end;gap:.6rem;pointer-events:none;font-family:var(--sans,system-ui,sans-serif);transition:top .4s cubic-bezier(.2,.7,.3,1)}
+html:has(#thpCircle:not([hidden])) .thp-demo{top:calc(var(--topbar-h,88px) + 12px)}
+.thp-demo>*{pointer-events:auto}
+.thp-demo-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;min-width:52px;min-height:88px;padding:.7rem .35rem;border:1px solid rgba(244,238,218,.55);border-right:0;border-radius:10px 0 0 10px;background:#23220F;color:#F4EEDA;cursor:pointer;font:600 .62rem/1.1 var(--sans,system-ui,sans-serif);letter-spacing:.14em;text-transform:uppercase;box-shadow:0 6px 24px rgba(25,24,7,.28)}
+.thp-demo-lbl{writing-mode:vertical-rl;transform:rotate(180deg)}
+.thp-demo-state{display:inline-block;margin-top:.35rem;padding:.2rem .35rem;border-radius:4px;background:#F4EEDA;color:#23220F;letter-spacing:.06em}
+.thp-demo-btn[aria-pressed="false"] .thp-demo-state{background:transparent;color:#F4EEDA;outline:1px solid rgba(244,238,218,.7)}
+.thp-demo-btn:hover{background:#2f2e16}
+.thp-demo-btn:focus-visible,.thp-demo-x:focus-visible{outline:2px solid #F4EEDA;outline-offset:2px;box-shadow:0 0 0 5px #23220F}
+.thp-demo-note{max-width:min(300px,calc(100vw - 72px));margin-right:.6rem;padding:1rem 1.1rem;border-radius:10px;background:#FBF9F1;color:#191807;border:1px solid rgba(110,104,37,.45);box-shadow:0 10px 40px rgba(25,24,7,.25);font-size:.86rem;line-height:1.5}
+.thp-demo-note p{margin:0 0 .8rem}
+.thp-demo-x{min-height:44px;padding:0 1.1rem;border:0;border-radius:999px;background:#23220F;color:#F4EEDA;font:600 .72rem/1 var(--sans,system-ui,sans-serif);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+/* Phones: the switch low on the right edge, clear of the booking fields; the note just under the photo strip (3:2
+   of the width), over the static heading, so it never stacks over the booking bar or the members' card and leaves
+   the strip's own walk into the window in view. */
+@media (max-width:720px){
+  .thp-demo{top:auto;bottom:6.5rem}
+  html:has(#thpCircle:not([hidden])) .thp-demo{top:auto}
+  .thp-demo-btn{min-width:44px;min-height:76px}
+  .thp-demo-note{position:fixed;top:min(calc(66.667vw + 12px),45svh);right:12px;margin:0;max-width:min(320px,calc(100vw - 24px))}
+}
+@media print{.thp-demo{display:none}}

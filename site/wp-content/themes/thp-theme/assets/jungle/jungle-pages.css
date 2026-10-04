@@ -1,0 +1,357 @@
+@charset "UTF-8";
+/* ============================================================
+   Фоновая графика джунглей — остальные страницы сайта
+   The Hidden Paradise Ubud · 16.09.2026
+
+   Подключается на всех шаблонах, кроме главной (jungle-bg.css) и раздела
+   Stay (jungle-rooms.css) — см. functions.php. Крючок — классы <body>
+   tpl-<шаблон> и valley-<слаг> из фильтра body_class.
+
+   Правило 16.09.2026: каждая картинка библиотеки стоит на сайте РОВНО
+   ОДИН РАЗ (единственное общее место — кроны с высоты в подвале). Что
+   куда — таблица в заметке «Фоновая графика джунглей — метод и библиотека».
+   Правила размещения те же, что в jungle-bg.css: своя кромка у каждого
+   рисунка, закрытая композиция целиком, не трогать текст и не дублировать
+   соседнее фото. Меняешь рисунок — поднимай ?v= у всех ссылок разом.
+   ============================================================ */
+
+:root{
+  --jungle-light: var(--accent, #6E6825);
+  --jungle-dark:  var(--cream,  #F4EEDA);
+  --fade-down: linear-gradient(to bottom, #000 55%, rgba(0,0,0,.45) 80%, transparent 100%);
+  --fade-up: linear-gradient(to top, #000 45%, rgba(0,0,0,.4) 75%, transparent 100%);
+}
+
+/* — общий слой: только те места, которые ниже получают рисунок — */
+.tpl-valley .section.on-dark::before,
+.tpl-hidden-gem-lounge main > section.room-copy:nth-of-type(2)::before,
+.tpl-valley-page.valley-tirta-empul .room-copy::before,
+.tpl-valley-page.valley-pejeng-moon .room-copy::before,
+.tpl-experiences #batur::before,
+.tpl-experiences #nusa-penida::before,
+.tpl-facilities main > section.section:nth-of-type(2)::before,
+.tpl-programs main > section.thp-tight:last-of-type::before,
+.tpl-host-retreat .section.on-dark:not(#terms)::before,
+.tpl-valley-page.valley-river-walk .room-copy::before,
+.tpl-valley-page.valley-gunung-kawi .room-copy::before,
+.tpl-experiences #kintamani::before,
+.tpl-experiences #melukat::before,
+.tpl-experiences #cooking-class::before,
+.tpl-facilities #floating-breakfast::before,
+.tpl-facilities #in-room::before,
+.tpl-spa main > section.room-copy:nth-of-type(2)::before,
+.tpl-sunset-point main > section.room-copy:nth-of-type(2)::before,
+.tpl-yoga-shala .thp-tight::before,
+.footer::before{
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  z-index:0;
+  background-color: var(--jungle-light);
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-position:center;  mask-position:center;
+  -webkit-mask-size:contain;     mask-size:contain;
+}
+.tpl-valley .section.on-dark,
+.tpl-hidden-gem-lounge main > section.room-copy:nth-of-type(2),
+.tpl-valley-page .room-copy,
+.tpl-experiences #batur, .tpl-experiences #nusa-penida,
+.tpl-facilities main > section.section:nth-of-type(2),
+.tpl-programs main > section.thp-tight:last-of-type,
+.tpl-host-retreat .section.on-dark,
+.tpl-experiences #kintamani, .tpl-experiences #melukat, .tpl-experiences #cooking-class,
+.tpl-facilities #floating-breakfast, .tpl-facilities #in-room,
+.tpl-spa main > section.room-copy:nth-of-type(2),
+.tpl-sunset-point main > section.room-copy:nth-of-type(2),
+.tpl-yoga-shala .thp-tight,
+.footer{
+  position:relative;
+  overflow:hidden;
+}
+.tpl-valley .section.on-dark > .wrap,
+.tpl-hidden-gem-lounge main > section.room-copy:nth-of-type(2) > .wrap,
+.tpl-valley-page .room-copy > .wrap,
+.tpl-experiences #batur > .wrap, .tpl-experiences #nusa-penida > .wrap,
+.tpl-facilities main > section.section:nth-of-type(2) > .wrap,
+.tpl-programs main > section.thp-tight:last-of-type > .wrap,
+.tpl-host-retreat .section.on-dark > .wrap,
+.tpl-experiences #kintamani > .wrap, .tpl-experiences #melukat > .wrap, .tpl-experiences #cooking-class > .wrap,
+.tpl-facilities #floating-breakfast > .wrap, .tpl-facilities #in-room > .wrap,
+.tpl-spa main > section.room-copy:nth-of-type(2) > .wrap,
+.tpl-sunset-point main > section.room-copy:nth-of-type(2) > .wrap,
+.tpl-yoga-shala .thp-tight > .wrap,
+.footer > .foot-grid, .footer > .foot-bottom, .footer > *{
+  position:relative;
+  z-index:1;
+}
+
+/* — /valley/: редкая полоса кроны стоит на нижней кромке тёмной секции
+     «The slanted footprint» — стволы у рисунка внизу, дальше кремовая
+     секция, низ виден; верх полосы растворяется, чтобы не задевать текст.
+     (16.09, вторая редакция: сначала полоса висела сверху вводки
+     отражённой — деревья вверх ногами и поверх абзацев.) — */
+.tpl-valley .section.on-dark::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("canopy-band-sparse.svg?v=3"); mask-image:url("canopy-band-sparse.svg?v=3");
+  -webkit-mask-position:bottom center; mask-position:bottom center;
+  left:0; right:0; bottom:-1px; width:100%; aspect-ratio:1024/224; opacity:.13;
+}
+
+/* — /taste/hidden-gem-lounge/: широкий куст бамбука растёт от нижней кромки
+     вводки, справа в поле — дальше полноширинное фото «Inside», низ виден — */
+.tpl-hidden-gem-lounge main > section.room-copy:nth-of-type(2)::before{
+  -webkit-mask-image:url("bamboo-clump-wide.svg?v=3"); mask-image:url("bamboo-clump-wide.svg?v=3");
+  -webkit-mask-position:right bottom; mask-position:right bottom;
+  right:-2%; bottom:-3%; width:16vw; aspect-ratio:480/465; opacity:.12;
+}
+
+/* Под полосы кроны секциям добавлен воздух снизу: полоса 1024×224/264
+   на 1440 px — это 310–370 px высоты, и без запаса её верх ложился на
+   последний абзац (расчёт 16.09: 54–84 px пересечения). */
+.tpl-valley .section.on-dark{ padding-bottom:17rem; }
+.tpl-programs main > section.thp-tight:last-of-type{ padding-bottom:19rem; }
+@media (max-width:760px){
+  .tpl-valley .section.on-dark{ padding-bottom:11rem; }
+  .tpl-programs main > section.thp-tight:last-of-type{ padding-bottom:13rem; }
+}
+
+/* — Партия 16.09.2026 (листы 20–21): восемь новых закрытых композиций, по
+     одной на страницу, в правом поле у узкой колонки текста. — */
+.tpl-valley-page.valley-river-walk .room-copy::before{
+  -webkit-mask-image:url("dragonfly-river-stones.svg?v=3"); mask-image:url("dragonfly-river-stones.svg?v=3");
+  right:4%; top:10%; width:13vw; aspect-ratio:397/369; opacity:.16;
+}
+.tpl-valley-page.valley-gunung-kawi .room-copy::before{
+  -webkit-mask-image:url("gunung-kawi-shrines.svg?v=3"); mask-image:url("gunung-kawi-shrines.svg?v=3");
+  right:3%; top:10%; width:14vw; aspect-ratio:470/376; opacity:.14;
+}
+.tpl-experiences #kintamani::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("lake-batur-boat.svg?v=3"); mask-image:url("lake-batur-boat.svg?v=3");
+  right:4%; top:10%; width:14vw; aspect-ratio:474/417; opacity:.18;
+}
+.tpl-experiences #melukat::before{
+  -webkit-mask-image:url("tirta-empul-spouts.svg?v=3"); mask-image:url("tirta-empul-spouts.svg?v=3");
+  right:4%; top:12%; width:14vw; aspect-ratio:463/355; opacity:.15;
+}
+.tpl-experiences #cooking-class::before{
+  -webkit-mask-image:url("mortar-pestle-chilli.svg?v=3"); mask-image:url("mortar-pestle-chilli.svg?v=3");
+  right:5%; top:12%; width:12vw; aspect-ratio:435/367; opacity:.16;
+}
+.tpl-facilities #floating-breakfast::before{
+  -webkit-mask-image:url("floating-breakfast-tray.svg?v=3"); mask-image:url("floating-breakfast-tray.svg?v=3");
+  right:4%; top:8%; width:14vw; aspect-ratio:451/307; opacity:.15;
+}
+.tpl-facilities #in-room::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("room-service-tray.svg?v=3"); mask-image:url("room-service-tray.svg?v=3");
+  right:4%; top:10%; width:14vw; aspect-ratio:481/318; opacity:.16;
+}
+.tpl-spa main > section.room-copy:nth-of-type(2)::before{
+  -webkit-mask-image:url("lotus-flower.svg?v=3"); mask-image:url("lotus-flower.svg?v=3");
+  right:5%; top:8%; width:12vw; aspect-ratio:409/402; opacity:.16;
+}
+.tpl-sunset-point main > section.room-copy:nth-of-type(2)::before{
+  -webkit-mask-image:url("sate-plate.svg?v=3"); mask-image:url("sate-plate.svg?v=3");
+  right:4%; top:10%; width:13vw; aspect-ratio:441/322; opacity:.15;
+}
+
+/* — /faq/ Good to Know: три закрытые композиции в правом поле узкой колонки
+     (колонка 820 px, поле ~21vw): фонарь у «Check-in and check-out» (вечерний
+     заезд), цикада у «The jungle does not stop at the door» (в тексте — цикады),
+     ветка франжипани у «Children». Макак на странице правил не ставим. — */
+.tpl-good-to-know .thp-know-block{ position:relative; }
+.tpl-good-to-know .thp-know-block:nth-of-type(1)::before,
+.tpl-good-to-know .thp-know-block:nth-of-type(3)::before,
+.tpl-good-to-know #jungle::before{
+  content:""; position:absolute; pointer-events:none; z-index:0;
+  background-color: var(--jungle-light);
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-position:center; mask-position:center;
+  -webkit-mask-size:contain; mask-size:contain;
+}
+.tpl-good-to-know .thp-know-block:nth-of-type(1)::before{
+  -webkit-mask-image:url("bamboo-lantern.svg?v=3"); mask-image:url("bamboo-lantern.svg?v=3");
+  right:-18vw; top:-1rem; width:7vw; aspect-ratio:271/457; opacity:.16;
+}
+.tpl-good-to-know #jungle::before{
+  -webkit-mask-image:url("cicada.svg?v=3"); mask-image:url("cicada.svg?v=3");
+  right:-19vw; top:0; width:9vw; aspect-ratio:392/405; opacity:.16;
+}
+.tpl-good-to-know .thp-know-block:nth-of-type(3)::before{
+  -webkit-mask-image:url("frangipani-cluster.svg?v=3"); mask-image:url("frangipani-cluster.svg?v=3");
+  right:-19vw; top:-0.5rem; width:10vw; aspect-ratio:447/428; opacity:.16;
+}
+/* — 24.09.2026 (решение владельца задачи): макака за листом монстеры, новая
+     версия по фото настоящей макаки с крыши (лист 23), у блока «The monkeys»
+     на странице правил, в ЛЕВОМ поле, чтобы не встать в одну вертикаль с
+     цикадой справа у #jungle. Старое правило «макак на странице правил не
+     ставим» этим решением снято для одного этого блока. — */
+.tpl-good-to-know #monkeys::before{
+  content:""; position:absolute; pointer-events:none; z-index:0;
+  background-color: var(--jungle-light);
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-position:center; mask-position:center;
+  -webkit-mask-size:contain; mask-size:contain;
+  -webkit-mask-image:url("macaque-behind-monstera-v2.svg?v=1"); mask-image:url("macaque-behind-monstera-v2.svg?v=1");
+  left:-19vw; bottom:0; width:13vw; aspect-ratio:377/449; opacity:.2;
+}
+@media (max-width:1120px){
+  .tpl-good-to-know .thp-know-block::before{ display:none; }
+}
+
+/* — /is-this-for-you/ (24.09.2026): макака в профиль рядом с листом монстеры
+     (лист 23, по фото макаки с крыши, которая стоит героем этой же страницы).
+     Сидит на нижней кромке секции фильтра в левом поле, под колонками текста
+     места нет, поэтому только на широких экранах (≥1400). — */
+.tpl-for-you #fit{ position:relative; }
+.tpl-for-you #fit::before{
+  content:""; position:absolute; pointer-events:none; z-index:0;
+  background-color: var(--jungle-light);
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-position:center bottom; mask-position:center bottom;
+  -webkit-mask-size:contain; mask-size:contain;
+  -webkit-mask-image:url("macaque-profile-monstera.svg?v=1"); mask-image:url("macaque-profile-monstera.svg?v=1");
+  left:1.5vw; bottom:-0.6vw; width:11vw; aspect-ratio:439/447; opacity:.2;
+}
+@media (max-width:1400px){
+  .tpl-for-you #fit::before{ display:none; }
+}
+
+/* — /valley/tirta-empul/: башня меру — закрытая композиция в правом поле
+     у текста; /valley/pejeng-moon/: церемониальный зонт-паянг там же.
+     Гунунг Кави и River Walk пока без графики — сюжетов под них в
+     библиотеке нет (см. список на генерацию в заметке метода). — */
+.tpl-valley-page.valley-tirta-empul .room-copy::before{
+  -webkit-mask-image:url("meru-temple.svg?v=3"); mask-image:url("meru-temple.svg?v=3");
+  right:6%; top:10%; width:7vw; aspect-ratio:214/463; opacity:.16;
+}
+.tpl-valley-page.valley-pejeng-moon .room-copy::before{
+  -webkit-mask-image:url("payung-umbrella.svg?v=3"); mask-image:url("payung-umbrella.svg?v=3");
+  right:6%; top:10%; width:9vw; aspect-ratio:340/462; opacity:.16;
+}
+
+/* — /experiences/: вулкан вдали над текстом Батура (тёмная секция, справа
+     сверху); гребень волны входит из-за левой кромки в «Nusa Penida».
+     Закат над морем и осьминог по-прежнему зарезервированы владельцем
+     под отдельную страницу Нуса Пениды. — */
+.tpl-experiences #batur::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("volcano.svg?v=3"); mask-image:url("volcano.svg?v=3");
+  right:5%; top:8%; width:14vw; aspect-ratio:549/339; opacity:.20;
+}
+.tpl-experiences #nusa-penida::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("ocean-wave.svg?v=3"); mask-image:url("ocean-wave.svg?v=3");
+  -webkit-mask-position:left bottom; mask-position:left bottom;
+  left:-4%; bottom:4%; width:16vw; aspect-ratio:469/339; opacity:.16;
+}
+
+/* — /facilities/: высокий куст бамбука растёт от нижней кромки секции
+     «Six places» в правом поле — дальше тёмная секция, низ виден — */
+.tpl-facilities main > section.section:nth-of-type(2)::before{
+  -webkit-mask-image:url("bamboo-clump.svg?v=3"); mask-image:url("bamboo-clump.svg?v=3");
+  -webkit-mask-position:right bottom; mask-position:right bottom;
+  right:-3%; bottom:-2%; width:13vw; aspect-ratio:825/974; opacity:.12;
+}
+
+/* — /programs/: плотная полоса кроны стоит на самом низу страницы —
+     нижняя кромка последней секции = конец документа (подвала на
+     внутренних страницах нет), деревья «на земле»; верх растворяется — */
+.tpl-programs main > section.thp-tight:last-of-type::before{
+  -webkit-mask-image:url("canopy-band.svg?v=3"); mask-image:url("canopy-band.svg?v=3");
+  -webkit-mask-position:bottom center; mask-position:bottom center;
+  left:0; right:0; bottom:-1px; width:100%; aspect-ratio:1024/264; opacity:.10;
+}
+
+/* — /retreats/: бале под алангом — закрытая композиция, светлым по тёмному,
+     в правом поле первой тёмной секции («What it costs»). Условия без графики. — */
+.tpl-host-retreat .section.on-dark:not(#terms)::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("bale-pavilion.svg?v=3"); mask-image:url("bale-pavilion.svg?v=3");
+  right:5%; top:10%; width:12vw; aspect-ratio:467/424; opacity:.16;
+}
+
+/* — /wellbeing/yoga-shala/: каменная лестница в долину уходит за нижнюю
+     кромку справа — дальше тёмный подвал, низ виден; по смыслу — те самые
+     одиннадцать ступеней к шале — */
+.tpl-yoga-shala .thp-tight::before{
+  -webkit-mask-image:url("valley-stairway.svg?v=3"); mask-image:url("valley-stairway.svg?v=3");
+  -webkit-mask-position:right bottom; mask-position:right bottom;
+  right:2%; bottom:-3%; width:15vw; aspect-ratio:448/451; opacity:.13;
+}
+
+/* — Подвал: везде одинаково — */
+.footer::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("jungle-canopy-aerial.svg?v=3"); mask-image:url("jungle-canopy-aerial.svg?v=3");
+  -webkit-mask-position:top center; mask-position:top center;
+  left:0; right:0; top:0; width:100%; aspect-ratio:1024/339; opacity:.10;
+}
+@supports (mask-composite: intersect) or (-webkit-mask-composite: source-in){
+  .tpl-valley .section.on-dark::before{
+    -webkit-mask-image:url("canopy-band-sparse.svg?v=3"), var(--fade-up);
+            mask-image:url("canopy-band-sparse.svg?v=3"), var(--fade-up);
+  }
+  .tpl-programs main > section.thp-tight:last-of-type::before{
+    -webkit-mask-image:url("canopy-band.svg?v=3"), var(--fade-up);
+            mask-image:url("canopy-band.svg?v=3"), var(--fade-up);
+  }
+  .tpl-valley .section.on-dark::before, .tpl-programs main > section.thp-tight:last-of-type::before{
+    -webkit-mask-size:contain, 100% 100%; mask-size:contain, 100% 100%;
+    -webkit-mask-composite:source-in;     mask-composite:intersect;
+  }
+  .footer::before{
+    -webkit-mask-image:url("jungle-canopy-aerial.svg?v=3"), var(--fade-down);
+            mask-image:url("jungle-canopy-aerial.svg?v=3"), var(--fade-down);
+    -webkit-mask-size:contain, 100% 100%; mask-size:contain, 100% 100%;
+    -webkit-mask-composite:source-in;     mask-composite:intersect;
+  }
+}
+
+/* ПЛАНШЕТ (761–1120 px): боковые поля у узких колонок исчезают —
+   боковые и угловые мотивы у текста уходят, полосы и нижние остаются */
+@media (max-width:1120px){
+  .tpl-experiences #kintamani::before, .tpl-experiences #melukat::before, .tpl-experiences #cooking-class::before,
+  .tpl-facilities #floating-breakfast::before, .tpl-facilities #in-room::before,
+  .tpl-spa main > section.room-copy:nth-of-type(2)::before,
+  .tpl-sunset-point main > section.room-copy:nth-of-type(2)::before,
+  .tpl-valley-page .room-copy::before,
+  .tpl-experiences #batur::before,
+  .tpl-host-retreat .section.on-dark:not(#terms)::before{ display:none; }
+  .tpl-hidden-gem-lounge main > section.room-copy:nth-of-type(2)::before{ width:24vw; }
+  .tpl-facilities main > section.section:nth-of-type(2)::before{ width:20vw; }
+  .tpl-yoga-shala .thp-tight::before{ width:22vw; }
+  .tpl-experiences #nusa-penida::before{ width:24vw; }
+}
+
+/* ТЕЛЕФОН (до 760 px): полосы крупнее (середина), остальное — по одному
+   мотиву на экран, узкое, в углу */
+@media (max-width:760px){
+  .tpl-valley .section.on-dark::before,
+  .tpl-programs main > section.thp-tight:last-of-type::before{
+    opacity:.12; -webkit-mask-size:200% auto, 100% 100%; mask-size:200% auto, 100% 100%;
+  }
+  .tpl-valley .section.on-dark::before{ aspect-ratio:1024/448; }
+  .tpl-programs main > section.thp-tight:last-of-type::before{ aspect-ratio:1024/528; }
+  .tpl-hidden-gem-lounge main > section.room-copy:nth-of-type(2)::before{ width:34vw; }
+  .tpl-facilities main > section.section:nth-of-type(2)::before{ width:30vw; }
+  .tpl-yoga-shala .thp-tight::before{ width:34vw; }
+  .tpl-experiences #nusa-penida::before{ width:36vw; }
+  .footer::before{
+    opacity:.11; aspect-ratio:1024/680;
+    -webkit-mask-size:200% auto, 100% 100%; mask-size:200% auto, 100% 100%;
+  }
+}
+
+@media print{
+  .tpl-valley .section.on-dark::before, .tpl-hidden-gem-lounge main > section.room-copy:nth-of-type(2)::before,
+  .tpl-valley-page .room-copy::before, .tpl-experiences #batur::before,
+  .tpl-experiences #nusa-penida::before, .tpl-experiences #kintamani::before, .tpl-experiences #melukat::before,
+  .tpl-experiences #cooking-class::before, .tpl-facilities #floating-breakfast::before, .tpl-facilities #in-room::before,
+  .tpl-spa main > section.room-copy:nth-of-type(2)::before, .tpl-sunset-point main > section.room-copy:nth-of-type(2)::before,
+  .tpl-facilities main > section.section:nth-of-type(2)::before,
+  .tpl-programs main > section.thp-tight:last-of-type::before,
+  .tpl-host-retreat .section.on-dark::before, .tpl-yoga-shala .thp-tight::before,
+  .footer::before{ display:none !important; }
+}

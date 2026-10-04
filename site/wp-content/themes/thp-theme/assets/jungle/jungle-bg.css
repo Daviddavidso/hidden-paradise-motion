@@ -1,0 +1,360 @@
+@charset "UTF-8";
+/* ============================================================
+   Фоновая графика джунглей — раскладка для главной страницы
+   The Hidden Paradise Ubud · собрано 31.08.2026
+
+   Кладётся в тему: wp-content/themes/thp-theme/assets/jungle/
+   рядом с SVG-файлами. Подключение — в functions.php:
+
+     wp_enqueue_style( 'thp-jungle',
+       get_theme_file_uri('assets/jungle/jungle-bg.css'),
+       array('thp-style'), THP_VERSION );
+
+   Разметку менять не нужно: всё на псевдоэлементах существующих
+   секций. Цвет графики берётся из переменных темы, поэтому при
+   смене палитры фон меняется сам.
+
+   ВАЖНО: адреса SVG внутри маски помечены ?v=N. Файлы отдаются с
+   max-age=604800, и при замене рисунка под тем же именем браузер ещё
+   неделю показывает старый — версия темы обновляет только сам CSS.
+   Меняешь рисунок — подними число в ?v= у всех ссылок разом.
+   ============================================================ */
+
+:root{
+  --jungle-light: var(--accent, #6E6825);  /* графика на светлых секциях */
+  --jungle-dark:  var(--cream,  #F4EEDA);  /* графика на тёмных секциях  */
+
+  /* Растворение вглубь страницы. Накладывается вторым слоем маски
+     и перемножается с рисунком, поэтому линии не обрываются, а тают.
+     ВАЖНО: у зеркальных элементов (transform:scaleX(-1)) якорь
+     задаётся ДО отражения — «at 0%» после зеркала окажется справа. */
+  --fade-edge: radial-gradient(135% 130% at 0% 38%,
+        #000 55%, rgba(0,0,0,.55) 82%, transparent 112%);
+  --fade-down: linear-gradient(to bottom,
+        #000 55%, rgba(0,0,0,.45) 80%, transparent 100%);
+}
+
+/* — общий слой ————————————————————————————————————— */
+.thp-intents::before, .thp-intents::after,
+.intro::before, .intro .wrap::after,
+.duo::before,
+.on-dark::before, .on-dark::after, .on-dark .wrap::after,
+.deep::before, .deep::after,
+.footer::before{
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  z-index:0;
+  background-color: var(--jungle-light);
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-position:center;  mask-position:center;
+  -webkit-mask-size:contain;     mask-size:contain;
+}
+
+/* секции, которые получают графику, должны обрезать её по себе */
+.thp-intents, .duo, .on-dark, .deep, .footer{
+  position:relative;
+  overflow:hidden;
+}
+/* содержимое — всегда выше фона */
+.thp-intents > .wrap, .intro > .wrap, .duo > .shot, .duo > .copy,
+.on-dark > .wrap, .deep > .wrap,
+.footer > .foot-grid, .footer > .foot-bottom{
+  position:relative;
+  z-index:1;
+}
+
+/* ============================================================
+   ПРАВИЛО РАСПОЛОЖЕНИЯ
+   У каждой картинки есть логика места. Два разных случая:
+
+   1) ФРАГМЕНТ большой сцены — входит из-за той кромки, которая
+      отвечает его природе, и никогда не обрывается в воздухе:
+        растёт из земли (пальма, бамбук, геликония)  → нижняя кромка
+        свисает (воздушные корни, ветвь баньяна)     → верхняя кромка
+        панорама, ветка на черешке                   → боковая кромка
+        полоса кроны                                 → во всю ширину
+      Кромка, за которую фрагмент уходит, — та, где у рисунка
+      обрезанные концы линий. Свободные стороны гасим растворением.
+
+   2) ЗАКРЫТАЯ КОМПОЗИЦИЯ — макака с листом, бабочка, канангсари.
+      У неё нет обрезанных концов, она самодостаточна. Такую ставим
+      ЦЕЛИКОМ в свободное поле, кромкой не режем: отрезанная голова
+      обезьяны — не «фрагмент джунглей», а брак.
+   ============================================================ */
+
+/* — 1. Кнопки-намерений: одна картинка — рисовые террасы (16.09.2026, вечер; до них — гибискус, лист 22;
+       до него здесь стояла макака с детёнышем — владельцу задачи «тоже плохо
+       смотрится», обезьян на главной больше нет)
+       (16.09.2026: макака за листом монстеры снята по решению владельца
+       задачи — «не понравилась»; файл остался в библиотеке, на сайте не
+       используется). Место и логика прежние:
+       Ревизия 05.09.2026 (взгляд графика): раньше стояла крупно под
+       левой карточкой второго ряда и висела в пустой нижней полосе, а в
+       левом верхнем углу болтался обрывок папоротника без связи с чем-либо.
+       Теперь макака — «седьмая плитка» сетки: прижата к правому краю
+       сетки, низом на одной линии с карточкой «Everything practical»,
+       ростом чуть выше карточки — выглядывает над рядом. Папоротник убран. — */
+.thp-intents::before{
+  /* 16.09.2026, третья редакция места: рисовые террасы (владелец задачи —
+     «сюда террасы лучше»). Панорама входит из-за правой кромки отражённой
+     (обрез — за краем), внутрь растворяется; секции добавлен воздух снизу,
+     чтобы панорама не заходила на первый ряд карточек. */
+  -webkit-mask-image:url("rice-terraces-open.svg?v=3"); mask-image:url("rice-terraces-open.svg?v=3");
+  -webkit-mask-position:right bottom; mask-position:right bottom;
+  transform:scaleX(-1);
+  /* Увеличена вдвое по просьбе владельца (05.09 вечер): теперь занимает
+     всё поле справа от карточки второго ряда — от низа секции до нижней
+     кромки первого ряда. Правый край по-прежнему на линии сетки. */
+  right:-3%; bottom:-1%; width:20vw; aspect-ratio:683/691; opacity:.12;
+}
+.thp-intents::after{ display:none; }
+
+@media (min-width:1121px){ .thp-intents{ padding-bottom:12vw; } }
+
+/* — 2. Интро о долине: одна картинка — стена джунглей снизу.
+       Ревизия 05.09.2026: террасы в правом верхнем углу убраны — с ними
+       правая половина секции была залита графикой от верха до низа
+       (террасы 444 px сверху встречались с листвой 470 px снизу), и два
+       мотива спорили. Стена чуть светлее. — */
+.intro > svg.valley{ display:none; }
+
+.intro::before{
+  -webkit-mask-image:url("jungle-wall-band.svg?v=3"); mask-image:url("jungle-wall-band.svg?v=3");
+  -webkit-mask-position:bottom center; mask-position:bottom center;
+  left:0; right:0; bottom:-1px; width:100%; aspect-ratio:1024/325; opacity:.11;
+}
+.intro .wrap::after{ display:none; }
+
+/* — 3. Долина пешком (тёмная): корни свисают сверху слева, ветвь
+       баньяна отражена — толстый конец уходит за правую кромку. — */
+.on-dark::before, .on-dark::after, .on-dark .wrap::after{
+  background-color: var(--jungle-dark);
+}
+.on-dark::before{
+  -webkit-mask-image:url("aerial-roots-curtain.svg?v=3"); mask-image:url("aerial-roots-curtain.svg?v=3");
+  left:-3%; top:-6%; width:20vw; aspect-ratio:447/460; opacity:.16;
+}
+.on-dark::after{
+  -webkit-mask-image:url("banyan-branch-roots.svg?v=3"); mask-image:url("banyan-branch-roots.svg?v=3");
+  right:-5%; top:-4%; width:24vw; aspect-ratio:462/460; opacity:.13;
+  transform:scaleX(-1);
+}
+/* Сидящая макака убрана 05.09.2026: на ширине 1480 она ложилась на текст
+   третьей карточки, а рядом уже стоит фотография настоящей макаки —
+   рисованная вторая читалась повтором. Секции хватает двух свисающих
+   мотивов сверху. */
+.on-dark .wrap::after{ display:none; }
+
+/* — 4. Спа и шала: ветка франжипани — закрытая композиция в пустом поле
+       под списком. 05.09.2026, вечер: до этого здесь росла геликония от
+       нижней кромки, но кромка невидима — следующая секция того же
+       кремового цвета, и растение «начиналось из воздуха». Растущее из
+       земли ставим только туда, где у секции есть видимый низ; здесь его
+       нет, поэтому берём предмет без корней. Франжипани — из текста рядом
+       (rituals … frangipani). Слева графики нет — там фотография. — */
+.duo::before{
+  /* 16.09.2026: гибискус вместо ветки франжипани (владелец задачи) */
+  -webkit-mask-image:url("hibiscus-flower.svg?v=3"); mask-image:url("hibiscus-flower.svg?v=3");
+  right:1.5%; bottom:2%; width:13vw; aspect-ratio:453/380; opacity:.22;
+}
+
+/* — 5. Причины бронировать напрямую: одна кокосовая пальма, растёт от
+       нижней кромки справа, под второй карточкой. 05.09.2026 вечер: слева
+       пробовали узкий и широкий бамбук — слева внизу лежит текст «Direct
+       rates…», а справа владелец предпочёл пальму бамбуку («она там лучше
+       смотрелась»). Бамбук остаётся в библиотеке. — */
+.deep::before, .deep::after{ background-color: var(--jungle-dark); }
+.deep::before{ display:none; }
+.deep::after{
+  -webkit-mask-image:url("coconut-palm.svg?v=3"); mask-image:url("coconut-palm.svg?v=3");
+  -webkit-mask-position:right bottom; mask-position:right bottom;
+  right:-4%; bottom:-10%; width:20vw; aspect-ratio:402/463; opacity:.12;
+}
+
+/* — 6. Отзывы гостей: графики нет. Секция залита фотографией
+       во всю ширину, тонкая линия на ней не читается вообще. — */
+
+/* — 7. Подвал: джунгли с высоты, вид строго сверху (05.09.2026).
+       Продолжает дрон-кадр над подвалом; у такого рисунка нет верха и
+       низа, поэтому его можно класть от верхней кромки, не переворачивая.
+       (До этого: полоса крон, отражённая по обеим осям — пальмы читались
+       вверх ногами.) — */
+.footer::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("jungle-canopy-aerial.svg?v=3"); mask-image:url("jungle-canopy-aerial.svg?v=3");
+  -webkit-mask-position:top center; mask-position:top center;
+  left:0; right:0; top:0; width:100%; aspect-ratio:1024/339; opacity:.10;
+}
+
+/* — Растворение свободных сторон ————————————————————————
+   Второй слой маски перемножается с рисунком. Где браузер не умеет
+   mask-composite — просто останется рисунок без растворения. */
+@supports (mask-composite: intersect) or (-webkit-mask-composite: source-in){
+  .thp-intents::before{
+    -webkit-mask-image:url("rice-terraces-open.svg?v=3"), var(--fade-edge);
+            mask-image:url("rice-terraces-open.svg?v=3"), var(--fade-edge);
+    -webkit-mask-size:contain, 100% 100%; mask-size:contain, 100% 100%;
+    -webkit-mask-composite:source-in;     mask-composite:intersect;
+  }
+  .intro .wrap::after{
+    -webkit-mask-image:url("rice-terraces-open.svg?v=3"), var(--fade-edge);
+            mask-image:url("rice-terraces-open.svg?v=3"), var(--fade-edge);
+  }
+  .on-dark::after{
+    -webkit-mask-image:url("banyan-branch-roots.svg?v=3"), var(--fade-edge);
+            mask-image:url("banyan-branch-roots.svg?v=3"), var(--fade-edge);
+  }
+  .on-dark::before{
+    -webkit-mask-image:url("aerial-roots-curtain.svg?v=3"), var(--fade-down);
+            mask-image:url("aerial-roots-curtain.svg?v=3"), var(--fade-down);
+  }
+  .footer::before{
+    -webkit-mask-image:url("jungle-canopy-aerial.svg?v=3"), var(--fade-down);
+            mask-image:url("jungle-canopy-aerial.svg?v=3"), var(--fade-down);
+  }
+  .intro .wrap::after, .on-dark::after, .on-dark::before, .footer::before{
+    -webkit-mask-size:contain, 100% 100%; mask-size:contain, 100% 100%;
+    -webkit-mask-composite:source-in;     mask-composite:intersect;
+  }
+}
+
+/* — Планшет (761–1120 px), ревизия 05.09.2026 вечер.
+     Сетка намерений становится 2×3 без пустых ячеек, а в «долине пешком»
+     наоборот — третья карточка остаётся одна и справа от неё пустая
+     ячейка во весь ряд. Графика следует за сеткой. — */
+@media (max-width:1120px){
+  /* Намерения: макаке места нет (раньше она стояла 13vw посреди верхней
+     полосы под заголовком и пряталась под шапкой). Переезжает в интро,
+     в правый верхний угол — заголовок там центрован, справа 250 px поля. */
+  .thp-intents::before{ display:none; }
+  .intro::after{ display:none; }
+  .intro-after-disabled{
+    content:""; position:absolute; pointer-events:none; z-index:0;
+    background-color: var(--jungle-light);
+    -webkit-mask-image:url("hibiscus-flower.svg?v=3"); mask-image:url("hibiscus-flower.svg?v=3");
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    -webkit-mask-position:center;  mask-position:center;
+    -webkit-mask-size:contain;     mask-size:contain;
+    right:4%; top:1.5%; width:22vw; aspect-ratio:453/380; opacity:.26;
+  }
+
+  /* Долина пешком: рисовые террасы в пустую ячейку справа от третьей
+     карточки. Панорама входит из-за правой кромки (отражена, как на
+     десктопе раньше); по смыслу — то, куда идут пешком. */
+  .on-dark .wrap::after{
+    display:none;
+    -webkit-mask-image:url("rice-terraces-open.svg?v=3"); mask-image:url("rice-terraces-open.svg?v=3");
+    right:-8%; bottom:14%; width:40vw; aspect-ratio:293/296; opacity:.12;
+    transform:scaleX(-1);
+  }
+
+  /* Спа: текст под фотографией во всю ширину, свободное поле — справа
+     внизу; 14vw там терялись. */
+  .duo::before{ width:22vw; right:5%; bottom:6%; }
+}
+
+/* — Мобильные (до 760 px): свой набор, ревизия 05.09.2026 вечер.
+     Секции на телефоне в полтора-два раза выше, поэтому правило
+     смягчается до «один мотив на экран». Главная поправка: полосы во всю
+     ширину на 375 px превращались в бахрому высотой 120 px — теперь
+     рисунок берётся вдвое крупнее (mask-size 200%), показывается его
+     средняя часть, боковые кромки режут листву — это разрешено. — */
+@media (max-width:760px){
+  .thp-intents::after, .on-dark::after, .on-dark .wrap::after{ display:none; }
+
+  /* Интро: стена джунглей снизу — крупнее, показана середина полосы */
+  .intro::before{
+    opacity:.13; aspect-ratio:1024/650;
+    -webkit-mask-size:200% auto; mask-size:200% auto;
+    -webkit-mask-position:bottom center; mask-position:bottom center;
+  }
+
+  /* Макака переезжает из «намерений» (там под последней карточкой 89px)
+     в верхнюю полосу интро — к правой кромке, как и на десктопе, лист
+     монстеры уходит за край, мордочка смотрит на знак с ростком.
+     До 05.09 стояла слева впритык к знаку и под шапкой — тесно. */
+  .thp-intents::before{ display:none; }
+  .intro::after{ display:none; }
+  .intro-after-disabled{
+    content:""; position:absolute; pointer-events:none; z-index:0;
+    background-color: var(--jungle-light);
+    -webkit-mask-image:url("hibiscus-flower.svg?v=3"); mask-image:url("hibiscus-flower.svg?v=3");
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    -webkit-mask-position:center;  mask-position:center;
+    -webkit-mask-size:contain;     mask-size:contain;
+    /* Закрытая композиция — мордочку кромкой не режем: right не отрицательный. */
+    right:3%; top:2%; width:36vw; aspect-ratio:453/380; opacity:.26;
+  }
+
+  /* Долина пешком: корни свисают от верхней кромки. На top:-6% от секции
+     высотой 1800px рисунок уезжал вверх на 100px и был почти не виден. */
+  /* Заголовок на телефоне во всю ширину, и любой свисающий мотив его
+     задевает — поэтому корни узкие: за текст заходят только 10–15 px
+     тонких линий на 14 %. */
+  .on-dark::before{ width:34vw; left:-12%; top:-1%; opacity:.14; }
+
+  /* Спа: ветка франжипани под списком, приподнята над плавающей
+     панелью контактов */
+  /* Единственное свободное поле — справа от кнопки SPA MENU; на 36vw
+     ветка ложилась на две строки списка. */
+  .duo::before{ width:30vw; right:3%; bottom:2%; }
+
+  /* Предложения: бамбук в правом нижнем углу, чуть уже, чтобы не
+     уходить под панель контактов по центру */
+  .deep::before{ display:none; }
+  .deep::after{ width:42vw; right:-8%; opacity:.12; }
+
+  /* Подвал: кроны сверху — крупнее, середина полосы */
+  .footer::before{
+    opacity:.11; aspect-ratio:1024/680;
+    -webkit-mask-size:200% auto, 100% 100%; mask-size:200% auto, 100% 100%;
+  }
+}
+
+/* — Печать: фон не нужен —————————————————————————————— */
+@media print{
+  .thp-intents::before, .thp-intents::after, .intro::before, .intro .wrap::after,
+  .duo::before, .on-dark::before, .on-dark::after, .on-dark .wrap::after,
+  .deep::before, .deep::after, .footer::before{ display:none; }
+}
+
+/* 20.09.2026 — the drawings move against the page while you scroll (desktop, motion allowed). main.js sets three
+   variables on each section as it crosses the screen, range 200px (70px was too little to notice):
+     --jup  0 → -200px for what hangs from the top edge: it may slide up behind the edge, never down (a gap would open);
+     --jdn  200px → 0  for what grows from the bottom edge: it rises into place, never lifts off the ground;
+     --jy   +50 → -50  for closed compositions that float free.
+   `translate` and `rotate` are separate from `transform`, so the mirrored banyan keeps its scaleX(-1).
+   .intro::before (the wall band) stays still: .intro does not clip, a moving band would spill into the next section. */
+@media (min-width:1121px) and (prefers-reduced-motion:no-preference){
+  .on-dark::before,.on-dark::after,.footer::before{translate:0 var(--jup,0px);will-change:translate}
+  .deep::before,.deep::after{translate:0 var(--jdn,0px);will-change:translate}
+  .duo::before,.intro .wrap::after,.on-dark .wrap::after{translate:0 var(--jy,0px);will-change:translate}
+}
+/* 20.09.2026 — every aerial root sways on its own (owner's idea). On the home page the two hanging drawings of
+   #play are inline SVG (assets/jungle/parts/roots.svg, banyan.svg): the same potrace contours, grouped into strands.
+   Roots: seven strands, each hangs from the top edge. Banyan: the branch is still, six roots under it swing.
+   Each strand turns around the top of its own box. The drawing sits in potrace's flipped coordinates, so the
+   visual top is 100% in fill-box terms. Period, angle and phase come from inline --d, --a, --del, all different,
+   so no two strands ever move together. Everywhere else .on-dark keeps its ::before/::after as before. */
+#play::before,#play::after{display:none}
+.thp-jg{position:absolute;pointer-events:none;z-index:0;color:var(--jungle-dark)}
+.thp-jg svg{display:block;width:100%;height:100%;overflow:visible}
+.thp-jg-roots{left:-3%;top:-6%;width:20vw;aspect-ratio:447/460;opacity:.16}
+.thp-jg-banyan{right:-5%;top:-4%;width:24vw;aspect-ratio:462/460;opacity:.13;transform:scaleX(-1)}
+@supports (mask-composite: intersect) or (-webkit-mask-composite: source-in){
+  .thp-jg-roots{-webkit-mask-image:var(--fade-down);mask-image:var(--fade-down);-webkit-mask-size:130% 100%;mask-size:130% 100%;-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+  .thp-jg-banyan{-webkit-mask-image:var(--fade-edge);mask-image:var(--fade-edge);-webkit-mask-size:100% 100%;mask-size:100% 100%}
+}
+@media (max-width:760px){ .thp-jg-banyan{display:none} .thp-jg-roots{width:34vw;left:-12%;top:-1%;opacity:.14} }
+@media print{ .thp-jg{display:none} }
+@media (min-width:1121px) and (prefers-reduced-motion:no-preference){
+  .thp-jg-roots,.thp-jg-banyan{translate:0 var(--jup,0px);will-change:translate}
+}
+@keyframes thp-strand{from{transform:rotate(calc(var(--a,1.5deg) * -1))}to{transform:rotate(var(--a,1.5deg))}}
+@media (prefers-reduced-motion:no-preference){
+  .thp-jg .jg-s{transform-box:fill-box;transform-origin:50% 100%;animation:thp-strand var(--d,7s) ease-in-out var(--del,0s) infinite alternate}
+  /* strands that are fused with the branch in one contour are shown through clip windows; their pivot is given
+     in viewBox units, inline, at the point where the strand leaves the branch */
+  .thp-jg .jg-s.jg-v{transform-box:view-box}
+}

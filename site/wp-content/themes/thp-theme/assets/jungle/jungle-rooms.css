@@ -1,0 +1,274 @@
+@charset "UTF-8";
+/* ============================================================
+   Фоновая графика джунглей — страницы номеров
+   The Hidden Paradise Ubud · собрано 05.09.2026 · переразложено 16.09.2026: каждая картинка
+   на сайте один раз (см. таблицу в заметке метода), повторы с главной и
+   между Stay и страницами номеров убраны
+
+   Подключается ТОЛЬКО на шаблонах room.php (шесть страниц номеров),
+   stay.php (обзор «All accommodation») и villa-oia.php — см. functions.php,
+   там же, где главная получает jungle-bg.css. Главная этот файл не грузит,
+   номера не грузят jungle-bg.css: классы .duo / .on-dark / .deep общие,
+   и два файла на одной странице спорили бы за одни и те же псевдоэлементы.
+
+   Правила те же, что на главной (см. jungle-bg.css и заметку метода):
+   одна картинка на секцию (на телефоне — на экран), рисунок не трогает
+   текст и не дублирует соседнее фото, закрытая композиция встаёт целиком,
+   растущее из земли — только где у секции видимый низ, свисающее — сверху,
+   лист на черешке — из-за боковой кромки.
+
+   Меняешь любой рисунок — поднимай ?v= у всех ссылок разом (статика
+   кэшируется на неделю); меняешь этот файл — поднимай THP_VERSION.
+   ============================================================ */
+
+:root{
+  --jungle-light: var(--accent, #6E6825);
+  --jungle-dark:  var(--cream,  #F4EEDA);
+  --fade-down: linear-gradient(to bottom,
+        #000 55%, rgba(0,0,0,.45) 80%, transparent 100%);
+}
+
+/* — общий слой ————————————————————————————————————— */
+.room-copy::before,
+.duo::before, .duo > .copy::before,
+.section.on-dark:not(.thp-room-block)::before,
+.thp-tight::before,
+.thp-room-block::before,
+.deep::before,
+.footer::before{
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  z-index:0;
+  background-color: var(--jungle-light);
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-position:center;  mask-position:center;
+  -webkit-mask-size:contain;     mask-size:contain;
+}
+.room-copy, .duo, .duo > .copy, .section.on-dark, .thp-tight, .thp-room-block, .deep, .footer{
+  position:relative;
+  overflow:hidden;
+}
+.room-copy > .wrap, .section.on-dark > .wrap, .thp-tight > .wrap, .thp-room-block > .wrap,
+.deep > .wrap, .duo > .shot, .duo > .copy > *, .footer > *{
+  position:relative;
+  z-index:1;
+}
+/* мобильный цветок в .duo включается только на телефоне */
+.duo > .copy::before{ display:none; }
+
+/* ============================================================
+   СТРАНИЦА НОМЕРА (room.php): hero → booking → текст → duo → галерея →
+   good to know (тёмная) → другие номера → подвал
+   16.09.2026: у каждого номера ДВА своих рисунка — лист/панорама у
+   текста (боковая кромка) и закрытая композиция или свисающее сверху
+   на тёмной «Good to know». Блок duo («What comes with the room») без
+   графики: ветка франжипани там повторяла главную. Ничего из этого
+   набора больше нигде на сайте не стоит.
+   ============================================================ */
+.room-copy::before{ display:none; }
+.duo::before{ display:none; }
+.section.on-dark:not(.thp-room-block)::before{ background-color: var(--jungle-dark); }
+
+/* Premiere Suite: лист монстеры из-за левой кромки; сидящая макака */
+.room-premiere-suite .room-copy::before{
+  display:block;
+  -webkit-mask-image:url("monstera-leaf.svg?v=3"); mask-image:url("monstera-leaf.svg?v=3");
+  left:1.5%; top:10%; width:15vw; aspect-ratio:749/806; opacity:.12; /* 16.09: сдвинут вправо — за край заходил слишком сильно (владелец задачи) */
+}
+.room-premiere-suite .section.on-dark:not(.thp-room-block)::before{
+  -webkit-mask-image:url("macaque-sitting.svg?v=3"); mask-image:url("macaque-sitting.svg?v=3");
+  right:7%; top:10%; width:9vw; aspect-ratio:458/487; opacity:.28;
+}
+
+/* Gem 2-Bedroom Villa: вайя папоротника с улиткой; макака висит на корне —
+   свисает от верхней кромки тёмной секции */
+.room-two-bedroom-villa .room-copy::before{
+  display:block;
+  -webkit-mask-image:url("fern-frond.svg?v=3"); mask-image:url("fern-frond.svg?v=3");
+  left:-5%; top:12%; width:15vw; aspect-ratio:417/420; opacity:.12;
+}
+.room-two-bedroom-villa .section.on-dark:not(.thp-room-block)::before{
+  -webkit-mask-image:url("macaque-hanging.svg?v=3"); mask-image:url("macaque-hanging.svg?v=3");
+  -webkit-mask-position:top center; mask-position:top center;
+  right:8%; top:-2%; width:7vw; aspect-ratio:343/504; opacity:.28;
+}
+
+/* Honeymoon Pool Suite: ветка франжипани из-за правой кромки; две макаки
+   в груминге — пара, закрытая композиция */
+.room-honeymoon-villa .room-copy::before{
+  display:block;
+  -webkit-mask-image:url("frangipani-branch.svg?v=3"); mask-image:url("frangipani-branch.svg?v=3");
+  right:-4%; top:14%; width:14vw; aspect-ratio:426/424; opacity:.14;
+  transform:scaleX(-1);
+}
+.room-honeymoon-villa .section.on-dark:not(.thp-room-block)::before{
+  -webkit-mask-image:url("macaques-grooming.svg?v=3"); mask-image:url("macaques-grooming.svg?v=3");
+  right:6%; top:8%; width:10vw; aspect-ratio:780/878; opacity:.28;
+}
+
+/* Valley View Suite: закат над ущельем (лист 23, 16.09.2026) — закрытая
+   композиция целиком в правом поле: солнце садится «прямо перед вами», как
+   в тексте. Террасы сняты: панорама обрывалась в поле и повторяла главную.
+   Спящая макака на тёмной. */
+.room-valley-suite .room-copy::before{
+  display:block;
+  -webkit-mask-image:url("valley-sunset.svg?v=3"); mask-image:url("valley-sunset.svg?v=3");
+  right:3%; top:8%; width:16vw; aspect-ratio:455/425; opacity:.13;
+}
+.room-valley-suite .section.on-dark:not(.thp-room-block)::before{
+  -webkit-mask-image:url("macaque-sleeping.svg?v=3"); mask-image:url("macaque-sleeping.svg?v=3");
+  right:7%; top:12%; width:9vw; aspect-ratio:483/399; opacity:.32;
+}
+
+/* Garden Suite: банановый лист из-за левой кромки; куст геликонии растёт
+   от нижней кромки тёмной секции — низ виден, дальше кремовая секция */
+.room-garden-suite .room-copy::before{
+  display:block;
+  -webkit-mask-image:url("banana-leaf.svg?v=3"); mask-image:url("banana-leaf.svg?v=3");
+  left:-5%; top:12%; width:15vw; aspect-ratio:371/434; opacity:.12;
+}
+.room-garden-suite .section.on-dark:not(.thp-room-block)::before{
+  -webkit-mask-image:url("heliconia-clump.svg?v=3"); mask-image:url("heliconia-clump.svg?v=3");
+  -webkit-mask-position:right bottom; mask-position:right bottom;
+  right:3%; bottom:-3%; width:13vw; aspect-ratio:427/464; opacity:.16;
+}
+
+/* Подвал (везде одинаковый, единственное общее для всех страниц место) */
+.footer::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("jungle-canopy-aerial.svg?v=3"); mask-image:url("jungle-canopy-aerial.svg?v=3");
+  -webkit-mask-position:top center; mask-position:top center;
+  left:0; right:0; top:0; width:100%; aspect-ratio:1024/339; opacity:.10;
+}
+
+/* ============================================================
+   ОБЗОР НОМЕРОВ (stay.php): пять печатей у блоков и ворота у поместья.
+   Только здесь — на страницах номеров эти предметы больше не стоят.
+   ============================================================ */
+.thp-tight::before{ display:none; }
+.tpl-stay .thp-room-block::before{
+  right:22%; top:5%; width:8vw; opacity:.22;
+}
+/* Premiere: не одна печать, а россыпь цветков франжипани, как на дорожках
+   Бали (замечание владельца задачи 16.09.2026). Один рисунок пятью слоями
+   маски разного размера в поле между текстом (до ~42 % ширины) и бейджами
+   (от ~84 %), плюс ::after — ещё два цветка, повёрнутые, чтобы не читалось
+   штампом. Пропорции региона: 30vw × 13vw. */
+.tpl-stay #premiere-suite::before{
+  -webkit-mask-image:url("frangipani-flower.svg?v=3"),url("frangipani-flower.svg?v=3"),url("frangipani-flower.svg?v=3"),url("frangipani-flower.svg?v=3"),url("frangipani-flower.svg?v=3");
+          mask-image:url("frangipani-flower.svg?v=3"),url("frangipani-flower.svg?v=3"),url("frangipani-flower.svg?v=3"),url("frangipani-flower.svg?v=3"),url("frangipani-flower.svg?v=3");
+  -webkit-mask-size:24% auto,15% auto,19% auto,12% auto,9% auto; mask-size:24% auto,15% auto,19% auto,12% auto,9% auto;
+  -webkit-mask-position:2% 8%,34% 72%,60% 0%,86% 60%,20% 100%; mask-position:2% 8%,34% 72%,60% 0%,86% 60%,20% 100%;
+  right:19%; top:24px; width:30vw; aspect-ratio:30/13; opacity:.22;
+}
+.tpl-stay #premiere-suite::after{
+  content:""; position:absolute; pointer-events:none; z-index:0;
+  background-color: var(--jungle-light);
+  -webkit-mask-image:url("frangipani-flower.svg?v=3"),url("frangipani-flower.svg?v=3"); mask-image:url("frangipani-flower.svg?v=3"),url("frangipani-flower.svg?v=3");
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-size:40% auto,28% auto; mask-size:40% auto,28% auto;
+  -webkit-mask-position:0% 100%,100% 0%; mask-position:0% 100%,100% 0%;
+  right:24%; top:calc(24px + 5vw); width:12vw; aspect-ratio:12/7; opacity:.18;
+  transform:rotate(-24deg);
+}
+.tpl-stay #two-bedroom-villa::before{
+  background-color: var(--jungle-dark); opacity:.30;
+  -webkit-mask-image:url("gecko.svg?v=3"); mask-image:url("gecko.svg?v=3");
+  aspect-ratio:413/439;
+}
+/* Gem: второй геккон (владелец задачи, 16.09.2026) — меньше, ниже и правее,
+   повёрнут навстречу первому; тот же рисунок, композиция в одном блоке. */
+.tpl-stay #two-bedroom-villa::after{
+  content:""; position:absolute; pointer-events:none; z-index:0;
+  background-color: var(--jungle-dark); opacity:.26;
+  -webkit-mask-image:url("gecko.svg?v=3"); mask-image:url("gecko.svg?v=3");
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-size:contain; mask-size:contain;
+  right:15%; top:calc(5% + 5.5vw); width:5.5vw; aspect-ratio:413/439;
+  transform:rotate(150deg);
+}
+.tpl-stay #honeymoon-villa::before{
+  -webkit-mask-image:url("butterfly.svg?v=3"); mask-image:url("butterfly.svg?v=3");
+  aspect-ratio:447/368;
+}
+.tpl-stay #valley-suite::before{
+  background-color: var(--jungle-dark); opacity:.30;
+  -webkit-mask-image:url("kingfisher.svg?v=3"); mask-image:url("kingfisher.svg?v=3");
+  aspect-ratio:366/405;
+}
+.tpl-stay #garden-suite::before{
+  -webkit-mask-image:url("canang-sari.svg?v=3"); mask-image:url("canang-sari.svg?v=3");
+  aspect-ratio:417/416;
+}
+.tpl-stay .deep::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("candi-bentar-gate.svg?v=3"); mask-image:url("candi-bentar-gate.svg?v=3");
+  left:6%; top:8%; width:9vw; aspect-ratio:415/425; opacity:.16;
+}
+
+/* ============================================================
+   VILLA OIA (villa-oia.php): вилла на склоне у гостиной; пышный бамбук
+   растёт от нижней кромки тёмного блока «Included» — дальше кремовая
+   секция «A day here», низ виден. Вулкан ушёл на страницу экскурсий
+   (Батур), ворота — только на Stay.
+   ============================================================ */
+.tpl-villa-oia .duo::before{
+  display:block;
+  -webkit-mask-image:url("hillside-villa.svg?v=3"); mask-image:url("hillside-villa.svg?v=3");
+  right:1.5%; bottom:1.5%; width:12vw; aspect-ratio:468/409; opacity:.16;
+}
+.tpl-villa-oia .deep::before{
+  background-color: var(--jungle-dark);
+  -webkit-mask-image:url("bamboo-clump-lush.svg?v=3"); mask-image:url("bamboo-clump-lush.svg?v=3");
+  -webkit-mask-position:right bottom; mask-position:right bottom;
+  right:-3%; bottom:-4%; width:16vw; aspect-ratio:428/477; opacity:.12;
+}
+
+@supports (mask-composite: intersect) or (-webkit-mask-composite: source-in){
+  .footer::before{
+    -webkit-mask-image:url("jungle-canopy-aerial.svg?v=3"), var(--fade-down);
+            mask-image:url("jungle-canopy-aerial.svg?v=3"), var(--fade-down);
+    -webkit-mask-size:contain, 100% 100%; mask-size:contain, 100% 100%;
+    -webkit-mask-composite:source-in;     mask-composite:intersect;
+  }
+}
+
+/* ПЛАНШЕТ (761–1120 px): колонки во всю ширину — боковые мотивы уходят */
+@media (max-width:1120px){
+  .room-copy::before{ display:none !important; }
+  .section.on-dark:not(.thp-room-block)::before{ width:11vw; right:6%; top:8%; }
+  .room-garden-suite .section.on-dark:not(.thp-room-block)::before{ width:18vw; }
+  .tpl-stay .thp-room-block::before{ width:11vw; right:24%; top:4%; }
+  .tpl-stay #premiere-suite::before{ width:40vw; right:8%; top:4px; }
+  .tpl-stay #premiere-suite::after{ display:none; }
+  .tpl-stay #two-bedroom-villa::after{ right:14%; top:calc(4% + 8vw); width:7vw; }
+  .tpl-stay .deep::before{ width:12vw; left:4%; top:5%; }
+  .tpl-villa-oia .duo::before{ width:20vw; right:4%; bottom:4%; }
+  .tpl-villa-oia .deep::before{ width:22vw; }
+}
+
+/* ТЕЛЕФОН (до 760 px): одна картинка на экран — остаётся только рисунок
+   на тёмной «Good to know» (номера), печати блоков (Stay), бамбук (Oia) */
+@media (max-width:760px){
+  .room-copy::before, .duo::before, .thp-tight::before{ display:none !important; }
+  .section.on-dark:not(.thp-room-block)::before{ width:15vw; right:6%; top:6%; }
+  .room-two-bedroom-villa .section.on-dark:not(.thp-room-block)::before{ width:11vw; }
+  .room-garden-suite .section.on-dark:not(.thp-room-block)::before{ width:26vw; top:auto; }
+  .tpl-stay .thp-room-block::before{ width:12vw; right:5%; top:6px; }
+  .tpl-stay #premiere-suite::before{ width:52vw; right:3%; top:2px; }
+  .tpl-stay #premiere-suite::after{ display:none; }
+  .tpl-stay #two-bedroom-villa::after{ display:none; }
+  .tpl-stay .deep::before{ display:none; }
+  .tpl-villa-oia .deep::before{ width:34vw; }
+  .footer::before{
+    opacity:.11; aspect-ratio:1024/680;
+    -webkit-mask-size:200% auto, 100% 100%; mask-size:200% auto, 100% 100%;
+  }
+}
+
+@media print{
+  .room-copy::before, .duo::before, .duo > .copy::before,
+  .section.on-dark:not(.thp-room-block)::before, .thp-tight::before,
+  .thp-room-block::before, .thp-room-block::after, .deep::before, .footer::before{ display:none !important; }
+}

@@ -1,0 +1,198 @@
+/* ==== core.css ==== */
+/* THP Motion · core. Every rule of the layer lives under html.thp-m, which the head snippet adds only when
+   motion is allowed; without it the theme renders exactly as before. */
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis:not(.lenis-autoToggle).lenis-stopped{overflow:clip}
+.lenis [data-lenis-prevent]{overscroll-behavior:contain}
+.lenis.lenis-smooth iframe{pointer-events:none}
+
+/* Shared helpers for modules */
+html.thp-m .thp-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ==== reveal.css ==== */
+/* THP Motion · reveal. Only transforms, opacity and clip-path, everything under html.thp-m: without the layer the
+   theme renders exactly as before. Hidden "before" states are set by reveal.js as inline opacity/transform/clip-path
+   and removed again once a block has arrived. */
+
+/* Blocks whose parts the layer animates itself: the theme's own .reveal fade stays off for them. */
+html.thp-m .reveal.thp-m-own{opacity:1;transform:none;transition:none}
+
+/* Line masks (SplitText): the clip reaches past the line box, so descenders and italic overhangs are never cut
+   while a line rises. overflow:visible replaces SplitText's inline overflow:clip; layout does not change. */
+html.thp-m .thp-m-ln-mask{overflow:visible!important;clip-path:inset(-.12em -.3em -.24em -.3em)}
+
+/* A photo settling from a slight zoom. `scale` composes with the theme's transforms (hover zoom, breathe, drift). */
+html.thp-m .thp-m-zi{scale:var(--thp-m-z,1)}
+/* While a curtain frame's photo is zoomed, a frame that does not clip on its own (.duo .shot) clips it, as its
+   clip-path already does visually, so the zoomed edges never add to the page's width. `clip` (not `hidden`): it
+   makes no scroll container, so grid/flex sizing of the frame stays exactly the theme's. */
+html.thp-m .thp-m-cf{overflow:clip}
+
+/* The ticking copy of a counting figure holds the final width, so the row never shifts. */
+/* font etc. inherit: themes style bare spans inside these rows (e.g. .thp-rev-stats span is the small caption). */
+html.thp-m .thp-m-tick{display:inline-block;margin:0;padding:0;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;
+  text-align:right;white-space:nowrap;-webkit-user-select:none;user-select:none}
+
+/* Inner-page heroes: the words wait for the layer instead of flashing up before it starts. core.js adds
+   thp-m-ready right after the modules run; if the layer never starts, the head snippet removes thp-m. */
+html.thp-m:not(.thp-m-ready) .page-hero .hero-inner>*,
+html.thp-m:not(.thp-m-ready) .oia-hero .hero-body>*{opacity:0}
+
+/* With a mouse: photos zoom in slowly and only a little. */
+@media (hover:hover) and (pointer:fine){
+  html.thp-m .card .shot img,html.thp-m .bed .shot img,html.thp-m .panel>img,html.thp-m .panel>picture>img,
+  html.thp-m .thp-duo-shots img,html.thp-m .room-gallery .g-shot img,html.thp-m .thp-room-gal img{
+    transition:transform 2.4s cubic-bezier(.16,1,.3,1)}
+  html.thp-m .card:hover .shot img,html.thp-m .bed:hover .shot img,
+  html.thp-m .room-gallery .g-shot:hover img,html.thp-m .thp-room-gal figure:hover img{transform:scale(1.045)}
+  html.thp-m .panel:hover>img,html.thp-m .panel:hover>picture>img{transform:scale(1.035)}
+  html.thp-m .thp-duo-shots figure:hover img{transform:scale(1.035)}
+}
+
+/* Jungle drawings (desktop with a mouse): reveal.js marks the sections whose ::before/::after is a drawing
+   (thp-m-jb / thp-m-ja; a trailing g = grows from the bottom edge) and sets two numbers on the section while it is
+   on screen: --thp-m-wind (−1…1, the speed of the scroll, settling back to 0) and --thp-m-jd (0…1, how far the
+   section has passed). `rotate` and `scale` are separate from the theme's `translate` parallax and from
+   `transform: scaleX(-1)` on the mirrored drawings; the pivot keeps x at 50%, so mirroring is unchanged. */
+@media (min-width:721px) and (hover:hover) and (pointer:fine){
+  html.thp-m .thp-m-jb::before,html.thp-m .thp-m-jbg::before,
+  html.thp-m .thp-m-ja::after,html.thp-m .thp-m-jag::after{
+    rotate:calc(var(--thp-m-wind,0) * 1.1deg);
+    scale:calc(1 + var(--thp-m-jd,0) * .06);
+    transform-origin:50% 0}
+  html.thp-m .thp-m-jbg::before,html.thp-m .thp-m-jag::after{transform-origin:50% 100%}
+  /* The inline hanging roots of #play only lean: rescaling their huge path data every frame is too costly. */
+  html.thp-m .thp-m-jx{rotate:calc(var(--thp-m-wind,0) * 1.1deg);transform-origin:50% 0}
+}
+
+/* ==== hero.css ==== */
+/* THP Motion · hero — "Through the window". Every rule is scoped under html.thp-m (motion allowed) and
+   html.thp-m-hero-on (added by hero.js once the home hero is set up), so the theme renders untouched otherwise. */
+
+/* Before the layer starts (first paint): the words wait for their entrance, and the room holds the first frame of
+   its settle (desktop: scale 1.04 × 1.08; phones: the first frame of the theme's "breathe"). If the layer never
+   starts, the head snippet removes html.thp-m and the theme takes over as before. */
+html.thp-m:not(.thp-m-ready) main section.hero .hero-inner>*{opacity:0}
+@media (min-width:721px){
+  html.thp-m:not(.thp-m-ready) main section.hero .hero-media img[src*="img-hero-living-w"]{animation:none;transform:scale(1.1232)}
+}
+@media (max-width:720px){
+  html.thp-m:not(.thp-m-ready) main section.hero .hero-media img[src*="img-hero-living-w"]{animation:none;transform:scale(1.02)}
+}
+
+/* The theme's Ken Burns drift would fight the scroll zoom: the layer drives the transform itself. */
+html.thp-m.thp-m-hero-on section.hero .hero-media img{animation:none;transform:scale(1.04);transform-origin:50% 50%}
+
+/* The valley, masked to the real opening of the window (mask set by JS), under the theme's own scrim. It is
+   framed on its top, where the low sun comes through the trees (the edge guard works on the element box). */
+html.thp-m .thp-m-hero-view,html.thp-m .thp-m-hero-glare{position:absolute;inset:0;pointer-events:none;opacity:0;transform-origin:50% 50%;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:cover;mask-size:cover;
+  -webkit-mask-position:50% 50%;mask-position:50% 50%}
+html.thp-m .thp-m-hero-valley{position:absolute;inset:0;width:100%;height:100%;max-width:none;transform-origin:50% 50%;
+  object-fit:cover;object-position:50% 0%;pointer-events:none}
+/* A short warm lift inside the opening while the room gives way to the valley (peaks at 30 % for a moment). */
+html.thp-m .thp-m-hero-glare{background:#F3E6C8}
+/* The low sun warming the arrival: soft-light, so the photo warms without a visible tint box. */
+html.thp-m .thp-m-hero-sun{position:absolute;inset:0;pointer-events:none;opacity:0;mix-blend-mode:soft-light;
+  background:radial-gradient(60% 50% at 42% 8%,rgba(255,202,136,.8),rgba(255,172,92,0) 72%),
+    radial-gradient(120% 100% at 46% 22%,rgba(255,218,168,.5),rgba(255,218,168,0) 85%)}
+/* Screen-locked scrim behind the text block. Static: full strength from the first frame, never animated; hero.js
+   only sizes it to the text block (on resize). It keeps the eyebrow, headline, tagline and buttons readable over
+   the bright window at rest, over the zoomed room and over the sunlit valley. */
+html.thp-m .thp-m-hero-scrim{position:absolute;inset:0;pointer-events:none;
+  --thp-m-scrim:rgba(25,24,7,.62) 0%,rgba(25,24,7,.59) 50%,rgba(25,24,7,.48) 72%,rgba(25,24,7,.2) 89%,rgba(25,24,7,0) 100%;
+  background:radial-gradient(36% 38% at 50% 50%,var(--thp-m-scrim))}
+/* Layer hints only while the walk is moving; at rest the browser redraws the frame at full sharpness. */
+html.thp-m .thp-m-hero-live .hero-media img,html.thp-m .thp-m-hero-live .thp-m-hero-view,
+html.thp-m .thp-m-hero-live .thp-m-hero-valley{will-change:transform,opacity}
+
+/* Desktop: a taller track; the hero sticks at the top while the visitor walks through the window. Windows
+   shorter than the theme's 600px hero minimum keep the normal flow (the zoom then plays as the hero leaves). */
+@media (min-width:721px) and (min-height:600px){
+  html.thp-m .thp-m-hero-track{position:relative;height:calc(100vh + 110vh);height:calc(100svh + 110vh)}
+  html.thp-m .thp-m-hero-track>section.hero{position:sticky;top:0}
+}
+/* The booking bar peeks 46px into the first screen in the theme; keep it docked there during the walk.
+   (Short windows never showed it in the first screen, so they do not dock it either.) */
+@media (min-width:721px) and (min-height:600px){
+  html.thp-m .thp-m-hero-track:not(.thp-m-undock)+.booking-wrap{position:sticky;bottom:var(--thp-m-bk-dock,-100px)}
+}
+/* Phones: the hero is an image strip with the words below it on paper: no scrim. */
+@media (max-width:720px){
+  html.thp-m.thp-m-hero-on section.hero .hero-media img{transform:scale(1.02)}
+  html.thp-m .thp-m-hero-scrim{display:none}
+}
+
+/* ==== water.css ==== */
+/* THP Motion · water — "Living water" on #pool. The canvas sits right after the photo, so it paints under the
+   theme's fixed scrim (.band::after) and the text (.inner, z-index 2). It only needs the photo to hold still:
+   the theme's slow "breathe" zoom stops on this one image while the water layer is live. */
+html.thp-m .thp-m-water-on>img,html.thp-m .thp-m-water-on>picture>img{animation:none}
+html.thp-m .thp-m-water{position:absolute;top:0;left:0;width:100%;height:100%;display:block;pointer-events:none}
+
+/* ==== sunset.css ==== */
+/* THP Motion · sunset — the "Sunset today" line and arc under the #taste heading. Only elements the layer adds
+   are styled here. */
+html.thp-m .thp-m-sunset{display:grid;justify-items:center;gap:.5rem;margin:.35rem auto 0;width:100%}
+html.thp-m .thp-m-sunset-arc{display:block;width:min(340px,74vw);height:auto;overflow:visible;color:var(--patina,#6E6825)}
+html.thp-m .thp-m-sunset-path{fill:none;stroke:var(--bronze,#B4924F);stroke-width:1.15;stroke-linecap:round;stroke-dasharray:.01 5.2;opacity:.85}
+html.thp-m .thp-m-sunset-hz{stroke-width:1}
+html.thp-m .thp-m-sunset-disc{fill:var(--bronze,#B4924F)}
+html.thp-m .thp-m-sunset-halo{fill:none;stroke:var(--bronze,#B4924F);stroke-width:.9;opacity:.45}
+html.thp-m .thp-m-sunset-line{margin:0;font-family:var(--serif);font-style:italic;font-weight:400;
+  font-size:clamp(1.25rem,1.75vw,1.55rem);line-height:1.35;letter-spacing:.005em;color:var(--ink,#191807);text-wrap:balance}
+html.thp-m .thp-m-sunset-line time{font-variant-numeric:lining-nums;white-space:nowrap}
+
+/* ==== transitions.css ==== */
+/* THP Motion · transitions — cross-document View Transitions.
+   The opt-in is an at-rule and cannot be scoped to html.thp-m; it is gated by prefers-reduced-motion here,
+   and transitions.js cancels it in `pageswap` when the layer is off. It has to live in this stylesheet (in
+   <head>, render-blocking) so the page being opened has it before its first paint. */
+@media (prefers-reduced-motion: no-preference){
+  @view-transition{navigation:auto}
+}
+
+/* The hero of the page being opened (photo + its scrim): the clicked card or panel grows into it. Its text is
+   captured on its own so the title fades in at its real size instead of being stretched with the photo.
+   Pages without a photo in the hero (privacy, terms…) do not take part. transitions.js names the card. */
+html.thp-m .page-hero,html.thp-m .oia-hero:has(img){view-transition-name:thp-m-hero}
+html.thp-m .page-hero>.hero-inner,html.thp-m .oia-hero:has(img)>.hero-body{view-transition-name:thp-m-hero-text}
+/* Room pages lay the specs bar over the hero's lower edge: captured apart, it stays above the photo. */
+html.thp-m .page-hero+.booking-wrap{view-transition-name:thp-m-hero-bar}
+/* The fixed top bar is captured on its own so the growing photo passes under it, not over it. */
+html.thp-m .topbar{view-transition-name:thp-m-topbar}
+
+html.thp-m::view-transition-group(*),
+html.thp-m::view-transition-image-pair(*),
+html.thp-m::view-transition-old(*),
+html.thp-m::view-transition-new(*){animation-duration:.38s;animation-timing-function:cubic-bezier(.22,.8,.24,1)}
+
+/* The page itself: the old one holds still under the growing photo and the new one settles in over it quickly,
+   once the photo has covered most of its way (a plain cross-fade of the dark home page into a cream page passes
+   through a milky grey, and shows the new page's bare background where its hero photo is still arriving). */
+html.thp-m::view-transition-old(root){animation:none}
+html.thp-m::view-transition-new(root){animation:thp-m-vt-in .26s .1s cubic-bezier(.22,.8,.24,1) both;mix-blend-mode:normal}
+@keyframes thp-m-vt-in{from{opacity:0}to{opacity:1}}
+
+/* Card (3:2) and hero (wide) differ in shape: both snapshots fill the moving frame and are cropped by it,
+   like the photos themselves (object-fit: cover), so nothing stretches mid-way. */
+html.thp-m::view-transition-image-pair(thp-m-hero){overflow:clip}
+html.thp-m::view-transition-old(thp-m-hero),
+html.thp-m::view-transition-new(thp-m-hero){width:100%;height:100%;object-fit:cover}
+
+/* Titles never scale: the old card's text leaves quickly, the new hero's title arrives once the photo has
+   nearly landed. fill-mode both keeps a finished fade-out at 0 until the transition ends. */
+html.thp-m::view-transition-group(thp-m-hero-text),
+html.thp-m::view-transition-group(thp-m-card-text){animation:none}
+html.thp-m::view-transition-old(thp-m-card-text),
+html.thp-m::view-transition-old(thp-m-hero-text){animation-duration:.16s;animation-fill-mode:both;animation-timing-function:ease-out}
+html.thp-m::view-transition-new(thp-m-hero-text),
+html.thp-m::view-transition-new(thp-m-hero-bar){animation-delay:.16s;animation-duration:.22s;animation-fill-mode:both;animation-timing-function:ease-out}
+html.thp-m::view-transition-group(thp-m-hero-bar){animation:none}
+html.thp-m::view-transition-old(thp-m-hero-bar){animation-duration:.16s;animation-fill-mode:both}
+
+/* The top bar changes from solid to transparent between pages: out, then in, in place (no double image). */
+html.thp-m::view-transition-group(thp-m-topbar){animation:none}
+html.thp-m::view-transition-old(thp-m-topbar){animation-duration:.14s;animation-fill-mode:both;animation-timing-function:linear}
+html.thp-m::view-transition-new(thp-m-topbar){animation-delay:.12s;animation-duration:.2s;animation-fill-mode:both;animation-timing-function:ease-out}
